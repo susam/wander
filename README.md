@@ -24,6 +24,7 @@ Contents
 * [How It Works](#how-it-works)
 * [Wandering the Web](#wandering-the-web)
 * [Setup](#setup)
+* [Caution](#caution)
 * [Design](#design)
 * [FAQ](#faq)
 * [Support](#support)
@@ -123,6 +124,26 @@ Setup
 
    Hopefully, someone will link to your console and then visitors to
    their console may receive recommendations from your `wander.js`.
+
+
+Caution
+-------
+
+When adding links to your console, make sure each one loads
+successfully within the console.  Some websites set the
+`X-Frame-Options` HTTP header or the `frame-ancestors` directive in
+their `Content-Security-Policy` header to prevent their pages from
+being embedded in other websites.  Such pages will not load inside the
+Wander console.
+
+Adding such links to your `wander.js` can disrupt the wandering
+experience for your visitors.
+
+To test a link, open https://susam.net/wander/ (or your own Wander
+console), paste the link into the URL textbox (the pale green input
+field) and click **Go**.  If the link loads within the console, it is
+safe to include.  If it does not, please avoid adding it to your
+`wander.js`.
 
 
 Design
