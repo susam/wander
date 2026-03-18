@@ -6,3 +6,11 @@ checks:
 deps:
 	npm install --no-save standard eslint-plugin-html
 	if command -v brew; then brew install tidy-html5; fi
+
+push:
+	git remote remove cb || :
+	git remote remove gh || :
+	git remote add gh ssh://git@github.com/susam/wander.git
+	git remote add cb ssh://git@codeberg.org/susam/wander.git
+	git push cb main
+	git push gh main
