@@ -87,9 +87,9 @@ Setup
 
    ```javascript
    window.wander = {
-     pages: [
-     ],
      consoles: [
+     ],
+     pages: [
      ],
    }
    ```
