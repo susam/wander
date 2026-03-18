@@ -32,7 +32,9 @@ A Wander console does two things:
 
 A Wander console is just a directory on your web server with two files:
 
-- [index.html](index.html) - This is the HTML tool that implements the Wander console.
+- [index.html](index.html) - This is the HTML tool that implements the
+  Wander console.
+
 - [wander.js](wander.js) - This is where you define the list of
   websites and pages you recommend and the other Wander consoles you
   want your console to link to.
@@ -47,8 +49,8 @@ webserver, preferrably, at the directory `/wander/`.
 Wandering the Web
 -----------------
 
-A visitor begins at a Wander console. This might be your own console
-or someone else's. For example, you could start at
+A visitor begins at a Wander console.  This might be your own console
+or someone else's.  For example, you could start at
 https://susam.net/wander/ right now.
 
 Once on a Wander console, the visitor can click the **Wander** button
@@ -56,8 +58,8 @@ at the top left to visit websites and pages recommended by the
 community.
 
 The first time you wander, the recommendation comes from the current
-console. The second time you wander, it comes from another console
-linked by the first. The third time you wander, it comes from a
+console.  The second time you wander, it comes from another console
+linked by the first.  The third time you wander, it comes from a
 console linked by the second, and so on.  In each hop, a console is
 chosen at random from those linked by the previous one.  A website
 recommendation is then chosen at random from that console.  In this
@@ -97,7 +99,7 @@ Setup
    The value for the `pages` property is a list of websites and pages
    you recommend to the community.
 
-   The vlaue for the `consoles` property is a list of consoles your
+   The value for the `consoles` property is a list of consoles your
    console should link to.
 
    Please see https://susam.net/wander/wander.js for an example.
@@ -105,10 +107,76 @@ Setup
 5. Once your console is live, share it with others in the following
    community thread:
 
-   https://codeberg.org/susam/wander/issues/1
+   [codeberg.org/susam/wander/issues/1](https://codeberg.org/susam/wander/issues/1)
 
    Hopefully, someone will link to your console and then visitors to
    their console may receive recommendations from your `wander.js`.
+
+
+Design Principles
+-----------------
+
+One of the design goals with Wander has been to keep it fully
+decentralised, similar to the Web itself.  I have tried to avoid
+having any centralised list of URLs or seed nodes.  Each Wander
+console is just a small, self-hosted node made up of two static files.
+Anyone can run it on their own website, define the pages they
+recommend and link to other consoles as neighbours.  All Wander
+consoles are equal from a technical perspective.  None of them act as
+a canonical source of seed URLs.  The network is defined entirely by
+these independently hosted consoles.  A visitor can start from any one
+of them and browse the network.  With each click The console tool
+simply follows the console neighbourhood from one console to another
+and loads the recommended pages it discovers.
+
+
+FAQ
+---
+
+ 1. How is this different from Kagi Small Web?
+
+    [Kagi Small Web](https://kagi.com/smallweb/) currently accepts
+    only blogs, comics and YouTube channels.  It does not accept
+    arbitrary small websites.  That limitation motivated me to build
+    Wander.
+
+    Unlike Kagi Small Web, there is no central list of URLs.  Each
+    participant hosts their own Wander console.  You can begin browsing
+    the network from any console.  The pages you see are pulled from
+    that console, the consoles it links to and so on recursively.
+
+2. How is this different from StumbleUpon?
+
+   There are some similarities to
+   [StumbleUpon](https://en.wikipedia.org/wiki/StumbleUpon) but unlike
+   StumbleUpon there is no central service.  The Wander network lives
+   entirely on independent personal websites maintained by
+   individuals.  The pages shown in a console come directly from the
+   recommendations shared by participants in the network.
+
+3. How different is this from Webrings?
+
+   This is similar to webrings in spirit, but differs in structure.  A
+   typical webring forms a cycle, where each site links to a fixed
+   next and previous site.  In Wander, the network graph is arbitrary.
+   Each instance can link to any number of pages and other instances.
+
+   There is no central list and no ring maintainer deciding how sites
+   are connected.  With Wander, *you* decide which pages to recommend
+   and which other consoles to link to.  This means you are in full
+   control of your recommendations and your Wander neighbourhood.
+
+
+Support
+-------
+
+I put this together in a couple of hours early this morning (18 Mar
+2026), so it may not be very polished and the list of websites is
+quite small as well.  If you encounter a bug, [please let me
+know][ISSUES].  If you like the idea, I would be glad if you [join the
+network](#setup).
+
+[ISSUES]: https://codeberg.org/susam/wander/issues
 
 
 Licence

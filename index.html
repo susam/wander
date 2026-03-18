@@ -180,12 +180,12 @@
         }
         url += 'wander.js'
         const script = document.createElement('script')
-        log('Loading console', url)
+        log('Loading next console', url)
         script.addEventListener('load', function () {
-          log('Loaded console', url)
+          log('Loaded next console', url)
         })
         script.addEventListener('error', function (e) {
-          log('Failed to load console', url, e)
+          log('Failed to load next console', url, e)
           window.wanderer = backup
           script.remove()
         })
