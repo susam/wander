@@ -1,8 +1,11 @@
 Wander the Small Web
 ====================
 
-Wander is a small, self-hosted web console that lets visitors explore
-random pages from a community of personal websites.
+Wander is a small, decentralised, self-hosted web console that lets
+your visitors explore random pages from a community of personal
+websites.
+
+[![Wander][IMG]][CON]
 
 Each Wander console loads personal websites and pages recommended by
 the Wander community.  Further, each Wander console can link to other
@@ -10,6 +13,9 @@ Wander consoles, forming a lightweight, decentralised network for
 browsing the small web of personal websites.
 
 Visit https://susam.net/wander/ to see an example of Wander console.
+
+[IMG]: https://susam.github.io/blob/img/wander/wander-0.1.0.png
+[CON]: https://susam.net/wander/
 
 
 How It Works
