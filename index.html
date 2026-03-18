@@ -1,27 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Wander</title>
+    <title>Wander the Web</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
       body {
+        background: #696;
         margin: 0;
         padding: 1em;
         line-height: 1.5;
       }
       button, input, noscript, dialog {
+        background: #bdb;
+        border-color: #363;
+        color: #030;
         font-family: courier, monospace;
         font-size: medium;
         font-weight: bold;
       }
       button, input {
         box-sizing: border-box;
-        cursor: pointer;
         margin-bottom: 1em;
         margin-right: 0.25em;
         min-height: 2.5em;
         width: 6em;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:hover {
+        background: #9c9;
+      }
+      button:active {
+        background: #8c8;
       }
       header button:last-of-type {
         margin-right: 0;
@@ -46,6 +58,10 @@
         display: block;
         margin: 2em auto 1em auto;
       }
+      dialog::backdrop {
+        background: #000;
+        opacity: 0.7;
+      }
       #urlw, #bReload, #bGo, #bCopy {
         display: none;
       }
@@ -53,16 +69,17 @@
         margin-right: 0;
       }
       noscript {
-        font-size: x-large;
-        border: medium double;
+        border: medium double #600;
+        color: #600;
         display: block;
-        padding: 1em;
+        font-size: x-large;
         margin-bottom: 1em;
+        padding: 1em;
         text-align: center;
       }
       iframe {
         background: #fff;
-        border: thick solid;
+        border: thick solid #363;
         box-sizing: border-box;
         display: none;
         height: calc(100vh - 12.5em);
@@ -80,46 +97,6 @@
         }
         #urlw {
           width: 25em;
-        }
-      }
-      body {
-        background: #696;
-      }
-      iframe {
-        border-color: #363;
-      }
-      button, input, dialog, dialog button {
-        color: #030;
-        background: #bdb;
-        border-color: #363;
-      }
-      button:hover, dialog button:hover {
-        background: #9d9;
-      }
-      button:active, dialog button:active {
-        background: #8c8;
-      }
-      noscript {
-        border-color: #600;
-        color: #600;
-      }
-      @media (prefers-color-scheme: dark) {
-        body {
-          background: #121;
-        }
-        button, input {
-          color: #0c0;
-          background: #010;
-        }
-        button:hover {
-          background: #020;
-        }
-        button:active {
-          background: #030;
-        }
-        noscript {
-          border-color: #f30;
-          color: #f30;
         }
       }
     </style>
