@@ -18,6 +18,18 @@ Visit https://susam.net/wander/ to see an example of Wander console.
 [CON]: https://susam.net/wander/
 
 
+Contents
+--------
+
+* [How It Works](#how-it-works)
+* [Wandering the Web](#wandering-the-web)
+* [Setup](#setup)
+* [Design](#design)
+* [FAQ](#faq)
+* [Support](#support)
+* [Licence](#licence)
+
+
 How It Works
 ------------
 
@@ -113,8 +125,8 @@ Setup
    their console may receive recommendations from your `wander.js`.
 
 
-Design Principles
------------------
+Design
+------
 
 One of the design goals with Wander has been to keep it fully
 decentralised, similar to the Web itself.  I have tried to avoid
