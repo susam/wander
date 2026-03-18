@@ -187,7 +187,7 @@ FAQ
    individuals.  The pages shown in a console come directly from the
    recommendations shared by participants in the network.
 
-3. How different is this from Webrings?
+3. How is this different from webrings?
 
    This is similar to webrings in spirit, but differs in structure.  A
    typical webring forms a cycle, where each site links to a fixed
