@@ -1,8 +1,8 @@
 Wander the Small Web
 ====================
 
-Wander is a small, decentralised, self-hosted web console that lets
-your visitors explore random pages from a community of personal
+**Wander** is a small, decentralised, self-hosted web console that
+lets your visitors explore random pages from a community of personal
 websites.
 
 [![Wander][IMG]][CON]
@@ -12,7 +12,7 @@ the Wander community.  Further, each Wander console can link to other
 Wander consoles, forming a lightweight, decentralised network for
 browsing the small web of personal websites.
 
-Visit https://susam.net/wander/ to see an example of Wander console.
+Visit https://susam.net/wander/ to see an example of a Wander console.
 
 [IMG]: https://susam.github.io/blob/img/wander/wander-0.1.0.png
 [CON]: https://susam.net/wander/
@@ -26,7 +26,10 @@ Contents
 * [Setup](#setup)
 * [Caution](#caution)
 * [Design](#design)
-* [FAQ](#faq)
+* [Comparisons](#comparisons)
+  * [Wander vs Kagi Small Web](#wander-vs-kagi-small-web)
+  * [Wander vs StumbleUpon](#wander-vs-stumbleupon)
+  * [Wander vs Webrings](#wander-vs-webrings)
 * [Support](#support)
 * [Licence](#licence)
 
@@ -52,11 +55,11 @@ A Wander console is just a directory on your web server with two files:
   websites and pages you recommend and the other Wander consoles you
   want your console to link to.
 
-The most interesting aspect of Wander console is that everything
+The most interesting aspect of the Wander console is that everything
 happens on the client-side, on the user's web browser.  As a website
 owner, you do not need to set up any server-side components.  The only
 thing you need to do is place the above two files somewhere on your
-webserver, preferrably, at the directory `/wander/`.
+web server, preferably, at the directory `/wander/`.
 
 
 Wandering the Web
@@ -71,11 +74,11 @@ at the top left to visit websites and pages recommended by the
 community.
 
 The first time you wander, the recommendation comes from the current
-console.  The second time you wander, it comes from another console
-linked by the first.  The third time you wander, it comes from a
-console linked by the second, and so on.  In each hop, a console is
-chosen at random from those linked by the previous one.  A website
-recommendation is then chosen at random from that console.  In this
+console. The second time you wander, it comes from another console
+linked by the first. The third time you wander, it comes from a
+console linked by the second, and so on. In each hop, a console is
+chosen at random from those linked by the previous one. A website
+recommendation is then chosen at random from that console. In this
 way, each hop takes you deeper and deeper into the Wander network.
 
 
@@ -93,7 +96,7 @@ Setup
 3. Place them on your website, for example:
 
    ```
-   wander
+   wander/
    ├── index.html
    └── wander.js
    ```
@@ -158,56 +161,70 @@ recommend and link to other consoles as neighbours.  All Wander
 consoles are equal from a technical perspective.  None of them act as
 a canonical source of seed URLs.  The network is defined entirely by
 these independently hosted consoles.  A visitor can start from any one
-of them and browse the network.  With each click The console tool
+of them and browse the network.  With each click, the console tool
 simply follows the console neighbourhood from one console to another
 and loads the recommended pages it discovers.
 
 
-FAQ
----
+Comparisons
+-----------
 
- 1. How is this different from Kagi Small Web?
+Wander is often compared to other projects and trends like webrings,
+Kagi Small Web and StumbleUpon.  There is indeed a lot of similarity
+between Kagi and such projects.  After all, each such service has been
+an inspiration behind Wander.  While there is a lot of similarity with
+such services, there are some differences as well.  These differences
+are noted in the following subsections.
 
-    [Kagi Small Web](https://kagi.com/smallweb/) currently accepts
-    only blogs, comics and YouTube channels.  It does not accept
-    arbitrary small websites.  That limitation motivated me to build
-    Wander.
+### Wander vs Kagi Small Web
 
-    Unlike Kagi Small Web, there is no central list of URLs.  Each
-    participant hosts their own Wander console.  You can begin browsing
-    the network from any console.  The pages you see are pulled from
-    that console, the consoles it links to and so on recursively.
+[Kagi Small Web][kagi] currently accepts only blogs, comics and
+YouTube channels.  It does not accept arbitrary small websites.  In
+fact, it was this particular limitation that motivated me to build
+Wander.
 
-2. How is this different from StumbleUpon?
+Unlike Kagi Small Web, there is no central list of URLs.  Each
+participant hosts their own Wander console along with their own list
+of favourite URLs.  You can begin browsing the network from any
+console.  The pages you see are pulled from that console, the consoles
+it links to and so on recursively.
 
-   There are some similarities to
-   [StumbleUpon](https://en.wikipedia.org/wiki/StumbleUpon) but unlike
-   StumbleUpon there is no central service.  The Wander network lives
-   entirely on independent personal websites maintained by
-   individuals.  The pages shown in a console come directly from the
-   recommendations shared by participants in the network.
+[kagi]: https://kagi.com/smallweb/
 
-3. How is this different from webrings?
 
-   This is similar to webrings in spirit, but differs in structure.  A
-   typical webring forms a cycle, where each site links to a fixed
-   next and previous site.  In Wander, the network graph is arbitrary.
-   Each instance can link to any number of pages and other instances.
+### Wander vs StumbleUpon
 
-   There is no central list and no ring maintainer deciding how sites
-   are connected.  With Wander, *you* decide which pages to recommend
-   and which other consoles to link to.  This means you are in full
-   control of your recommendations and your Wander neighbourhood.
+Wander has similarities to [StumbleUpon][stumble] as well but unlike
+StumbleUpon there is no central service.  The Wander network lives
+entirely on independent personal websites maintained by individuals.
+The pages shown in a console come directly from such Wander consoles
+that belong to individual personal website owners.
+
+
+### Wander vs Webrings
+
+Wander is similar to webrings in spirit, but differs in structure.  A
+typical webring forms a cycle, where each site links to a fixed next
+and previous site.  In Wander, the network graph is arbitrary.  Each
+instance can link to any number of pages and other instances.
+
+There is no central list and no ring maintainer deciding how sites are
+connected.  With Wander, *you* decide which pages to recommend and
+which other consoles to link to.  This means you are in full control
+of your recommendations and your Wander neighbourhood.
+
+[stumble]: https://en.wikipedia.org/wiki/StumbleUpon
 
 
 Support
 -------
 
-I put this together in a couple of hours early this morning (18 Mar
-2026), so it may not be very polished and the list of websites is
-quite small as well.  If you encounter a bug, [please let me
-know][ISSUES].  If you like the idea, I would be glad if you [join the
-network](#setup).
+I put this together in the early hours of morning today (18 Mar 2026),
+so it may not be very polished and the list of websites is quite small
+as well.  But the list is growing.  I am adding some finishing touches
+too whenever I can spare some time from my otherwise busy schedule.
+If you encounter a bug, [please let me know][ISSUES].  If you like the
+idea, I would be glad if you [join the network](#setup).
 
 [ISSUES]: https://codeberg.org/susam/wander/issues
 
