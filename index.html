@@ -128,12 +128,15 @@
     <script>
       const LOGGING = true
       const VERSION = '0.1.0'
+      const KEEP_CONSOLES = 1000
+      let consoles = window.wander.consoles
+      let pages = window.wander.pages
 
       function init () {
         log(`Wander ${VERSION}`)
         initConsole()
         document.getElementById('bWander').addEventListener('click', wanderPage)
-        document.getElementById('bConsole').addEventListener('click', wanderConsole)
+        document.getElementById('bConsole').addEventListener('click', consoleDialog)
         document.getElementById('bReload').addEventListener('click', reloadFrame)
         document.getElementById('bGo').addEventListener('click', goLink)
         document.getElementById('bCopy').addEventListener('click', copyLink)
@@ -159,7 +162,7 @@
 
       function wanderPage () {
         const iframe = document.getElementById('iframe')
-        const url = pick(filter(window.wander.pages))
+        const url = pick(filter(pages))
         document.getElementById('urln').value = url
         document.getElementById('urlw').value = url
         iframe.src = url
@@ -176,13 +179,12 @@
         loadConsole()
       }
 
-      function wanderConsole () {
+      function consoleDialog () {
         document.getElementById('dConsole').showModal()
       }
 
       function loadConsole () {
-        const backup = window.wanderer
-        let url = pick(filter(window.wander.consoles))
+        let url = pick(filter(consoles))
         if (!url.endsWith('/')) {
           url += '/'
         }
@@ -191,14 +193,38 @@
         log('Loading next console', url)
         script.addEventListener('load', function () {
           log('Loaded next console', url)
+          collectConsoles(window.wander.consoles)
+          collectPages(window.wander.pages)
+          script.remove()
+
         })
         script.addEventListener('error', function (e) {
-          log('Failed to load next console', url, e)
-          window.wanderer = backup
           script.remove()
+          log('Failed to load next console', url, e)
         })
         script.src = url
         document.head.append(script)
+      }
+
+      function collectConsoles (newConsoles) {
+        for (const url of newConsoles) {
+          if (!consoles.includes(url)) {
+            consoles.push(url)
+          }
+        }
+        if (consoles.length > KEEP_CONSOLES) {
+          consoles = consoles.slice(KEEP_CONSOLES - consoles.length)
+        }
+        log('Consoles discovered so far:', consoles.length)
+      }
+
+      function collectPages (newPages) {
+        if (newPages.length > 0) {
+          pages = newPages
+          log('Number of pages set:', pages.length)
+        } else {
+          log('No new pages; number of pages left intact:', pages.length)
+        }
       }
 
       function reloadFrame () {

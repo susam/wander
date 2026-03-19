@@ -90,10 +90,11 @@ that console are discovered as well.  Note that throughout this
 process, you remain on the original console you visited.
 
 With each click of the button, a console is chosen at random from the
-growing list of discovered consoles.  A recommendation from that
-console is shown to you and its neighbours are added to the list.  In
-this way, each hop takes you deeper into the Wander network, while
-expanding the set of known consoles.
+growing list of discovered consoles.  Specifically, it selects a
+random console from the most recently discovered 1000 consoles.  A
+recommendation from that console is shown to you and its neighbours
+are added to the list.  In this way, each hop takes you deeper into
+the Wander network, while expanding the set of known consoles.
 
 As mentioned earlier, you never leave the original console while this
 happens.  However, if you wish, you can click the **Console** button

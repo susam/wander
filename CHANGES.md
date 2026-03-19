@@ -8,10 +8,14 @@ Changelog
 
 - Download link has been updated from
   <https://codeberg.org/susam/wander/archive/main.zip> to
-  <https://codeberg.org/susam/wander/archive/wander.zip>
+  <https://codeberg.org/susam/wander/archive/wander.zip>.
+- If a console presents no pages, its page list is ignored.
+- Pick a random console from the most recently discovered 1000
+  consoles.  Previously, only neighbours of the most recently visited
+  console were considered.
 
 
-(2025-03-19)
+0.1.0 (2025-03-19)
 ------------------
 
 ### Added
