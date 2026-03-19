@@ -14,3 +14,15 @@ push:
 	git remote add cb ssh://git@codeberg.org/susam/wander.git
 	git push cb main
 	git push gh main
+
+dist:
+	git checkout main || :
+	git branch -df wander || :
+	git checkout -b wander
+	git rm *.md Makefile .gitignore
+	VER=$$(grep VERSION index.html | head -n 1 | cut -d "'" -f2);
+	git commit -m "Create distributable bundle for Wander $VER"
+	git push -f cb wander
+	git push -f gh wander
+	ls -l
+	git checkout main
