@@ -3,7 +3,7 @@ window.wander = {
   consoles: [
     'https://susam.net/wander/',
   ],
-  // Websites and pages I recommend to other wanderers.
+  // My favourite websites and pages I recommend to the Wander community.
   pages: [
     'https://midnight.pub/',
     'https://susam.net/',

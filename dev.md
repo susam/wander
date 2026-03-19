@@ -19,6 +19,8 @@ Release Checklist
     git commit -m "Set version to $VER"
     git tag "$VER" -m "Wander $VER"
     make push
+    git push cb "$VER"
+    git push gh "$VER"
     ```
 
  4. Write release page on personal website:
