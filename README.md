@@ -131,10 +131,8 @@ Setup
 
    ```javascript
    window.wander = {
-     consoles: [
-     ],
-     pages: [
-     ],
+     consoles: [],
+     pages: [],
    }
    ```
 
