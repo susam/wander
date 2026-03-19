@@ -26,3 +26,9 @@ dist:
 	git push -f gh wander
 	ls -l
 	git checkout main
+
+cp:
+	cp index.html ~/git/susam.net/content/tree/wander/
+
+pub: cp
+	cd ~/git/susam.net && make copub
