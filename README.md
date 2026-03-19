@@ -158,12 +158,12 @@ Setup
    present it to its user.
 
 5. Once your console is live, share it with others in the following
-   community thread:
-
-   [codeberg.org/susam/wander/issues/1](https://codeberg.org/susam/wander/issues/1)
+   community thread: [codeberg.org/susam/wander/issues/1][thread]
 
    Hopefully, someone will link to your console and then visitors to
    their console may receive recommendations from your `wander.js`.
+
+[thread]: https://codeberg.org/susam/wander/issues/1
 
 
 Caution
