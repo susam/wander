@@ -1,7 +1,17 @@
 Changelog
 =========
 
-0.1.0 (2025-03-19)
+0.2.0 (UNRELEASED)
+------------------
+
+### Changed
+
+- Download link has been updated from
+  <https://codeberg.org/susam/wander/archive/main.zip> to
+  <https://codeberg.org/susam/wander/archive/wander.zip>
+
+
+(2025-03-19)
 ------------------
 
 ### Added

@@ -108,7 +108,7 @@ Setup
 -----
 
 1. Download this bundle:
-   https://codeberg.org/susam/wander/archive/main.zip
+   https://codeberg.org/susam/wander/archive/wander.zip
 
 2. Extract the following files:
 
