@@ -1,12 +1,12 @@
 <!--
-  Wander 0.2.0.dev2
+  Wander 0.2.0.dev3
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Wander the Web</title>
+    <title>Wander Console - Browse the Small Web</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
@@ -61,6 +61,10 @@
         padding-left: 2rem;
         width: calc(100% - 4rem);
         display: inline-block;
+      }
+      dialog > header > div {
+        text-align: center;
+        margin-top: 0;
       }
       dialog h1, dialog > header > form {
         display: inline-block;
@@ -127,7 +131,7 @@
     <script src="wander.js"></script>
     <script>
       const LOGGING = true
-      const VERSION = '0.1.0'
+      const VERSION = '0.2.0.dev3'
       const KEEP_CONSOLES = 1000
       let consoles = window.wander.consoles
       let pages = window.wander.pages
@@ -143,6 +147,7 @@
         document.getElementById('bAbout').addEventListener('click', showAbout)
         document.getElementById('urln').addEventListener('keydown', keyHandler)
         document.getElementById('urlw').addEventListener('keydown', keyHandler)
+        document.getElementById('version').textContent = VERSION
         wanderPage()
         log('Initialised')
       }
@@ -332,7 +337,8 @@
     </dialog>
     <dialog id="dAbout">
       <header>
-        <h1>About Wander</h1><form method="dialog"><button>x</button></form>
+        <h1>About Wander Console</h1><form method="dialog"><button>x</button></form>
+        <div>Version <span id="version"></span></div>
       </header>
       <p>
         Hello!  You are currently on a Wander console!  A Wander

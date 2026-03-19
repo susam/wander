@@ -4,6 +4,10 @@ Changelog
 0.2.0 (UNRELEASED)
 ------------------
 
+### Added
+
+- Show version number in the about dialog.
+
 ### Changed
 
 - Download link has been updated from
@@ -13,6 +17,8 @@ Changelog
 - Pick a random console from the most recently discovered 1000
   consoles.  Previously, only neighbours of the most recently visited
   console were considered.
+- Title bar and the about dialog now contain the name 'Wander Console'
+  rather than just 'Wander'
 
 
 0.1.0 (2025-03-19)
