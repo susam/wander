@@ -217,6 +217,11 @@ or absolute URLs.  Files are loaded in the following order:
 3. Then it loads all the custom scripts in the order specified.
 4. Finally, it sets up the console with a randomly chosen website.
 
+Prefer using this customisation mechanism to customise your console.
+This allows you to keep your `index.html` unmodified, which makes it
+easier to upgrade your Wander Console UI simply by downloading a new
+copy of the file and replacing your existing one.
+
 
 Caution
 -------

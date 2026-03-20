@@ -7,9 +7,10 @@ Changelog
 ### Added
 
 - Show version number in the **About** dialog.
-- Add **Open** button to open a website recommendation in a new tab.
-- Add `styles` and `scripts` properties in `wander.js` to allow
+- Add an **Open** button to open a website recommendation in a new tab.
+- Add `styles` and `scripts` properties to `wander.js` to allow
   customising the Wander Console.
+- Display current host console in the **Console** dialog.
 
 ### Changed
 

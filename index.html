@@ -1,5 +1,5 @@
 <!--
-  Wander 0.2.0.dev6
+  Wander 0.2.0.dev7
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -88,6 +88,13 @@
         vertical-align: top;
         width: 2em;
       }
+      dialog h2 {
+        font-size: 1.2em;
+        margin-bottom: 0;
+      }
+      dialog h2 + p {
+        margin-top: 0.5em;
+      }
       dialog footer button {
         margin-bottom: 0;
       }
@@ -132,11 +139,14 @@
     <script src="wander.js"></script>
     <script>
       const LOGGING = true
-      const VERSION = '0.2.0.dev6'
+      const VERSION = '0.2.0.dev7'
       const KEEP_CONSOLES = 1000
 
       let consoles = window.wander.consoles
       let pages = window.wander.pages
+      let newConsoleLink = location.href
+      let history = []
+      let consolesFound = 0
 
       function init () {
         log(`Wander ${VERSION}`)
@@ -155,7 +165,7 @@
           const link = document.createElement('link')
           link.rel = 'stylesheet'
           link.href = href
-          document.head.appendChild(link)
+          document.head.append(link)
         }
       }
 
@@ -164,7 +174,7 @@
         for (const src of scripts) {
           const script = document.createElement('script')
           script.src = src
-          document.head.appendChild(script)
+          document.head.append(script)
         }
       }
 
@@ -185,8 +195,8 @@
         for (const url of window.wander.consoles) {
           const li = document.createElement('li')
           const a = document.createElement('a')
-          li.appendChild(a)
-          ul.appendChild(li)
+          li.append(a)
+          ul.append(li)
           a.href = url
           a.textContent = url
         }
@@ -204,6 +214,7 @@
         document.getElementById('url-narrow-input').value = url
         document.getElementById('url-wide-input').value = url
         iframe.src = url
+        history.push({ console: newConsoleLink, page: url })
         log('Loading new page:', url)
       }
 
@@ -219,15 +230,37 @@
       }
 
       function showConsoleDialog () {
+        document.getElementById('host-console-link').textContent = location.href
+        document.getElementById('host-console-link').href = location.href
+
+        const ul = document.getElementById('history-list')
+        ul.textContent = ''
+        for (const item of history) {
+          const li = document.createElement('li')
+          const p = document.createElement('p')
+          const a1 = document.createElement('a')
+          const a2 = document.createElement('a')
+          const a3 = document.createElement('a')
+          const br = document.createElement('br')
+          ul.append(li)
+          li.append(p)
+          p.append(a1, br, a2, ' (', a3, ')')
+          a1.href = a1.textContent = item.page
+          a2.href = item.console
+          a2.textContent = wanderURL(item.console)
+          a3.href = wanderJSURL(item.console)
+          a3.textContent = 'js'
+        }
         document.getElementById('console-dialog').showModal()
       }
 
       function pickNewConsole () {
-        const url = wanderJSURL(pick(filter(consoles)))
+        const consoleURL = pick(filter(consoles))
+        const jsURL = wanderJSURL(consoleURL)
         const script = document.createElement('script')
-        log('Loading next console:', url)
+        log('Loading next console:', jsURL)
         script.addEventListener('load', function () {
-          log('Loaded next console:', url)
+          log('Loaded next console:', jsURL)
           collectConsoles(window.wander.consoles)
           collectPages(window.wander.pages)
           script.remove()
@@ -236,21 +269,30 @@
           script.remove()
           log('Cannot load next console:', url, e, e.message)
         })
-        script.src = url
-        document.head.appendChild(script)
+        script.src = jsURL
+        document.head.append(script)
+        newConsoleLink = consoleURL
       }
 
       function wanderJSURL (consoleURL) {
-        if (!consoleURL.endsWith('/')) {
-          consoleURL += '/'
+        return wanderURL(consoleURL) + 'wander.js'
+      }
+
+      function wanderURL(url) {
+        if (url.endsWith('index.html')) {
+          url = url.slice(0, -'index.html'.length);
         }
-        return consoleURL + 'wander.js'
+        if (!url.endsWith('/')) {
+          url += '/';
+        }
+        return url;
       }
 
       function collectConsoles (newConsoles) {
         for (const url of newConsoles) {
           if (!consoles.includes(url)) {
             consoles.push(url)
+            consolesFound++
           }
         }
         if (consoles.length > KEEP_CONSOLES) {
@@ -349,21 +391,35 @@
     <iframe id="wander-iframe"></iframe>
     <dialog id="console-dialog">
       <header>
-        <h1>Wander to Another Console</h1><form method="dialog"><button>x</button></form>
+        <h1>Console Explorer</h1><form method="dialog"><button>x</button></form>
       </header>
+      <h2>Host Console</h2>
       <p>
-        By wandering to another console, you will leave the current
-        console on this website and reach a Wander console on a
-        different website.  You can then continue wandering the Web
-        using the console on that website.
+        You are currently on <a id="host-console-link"></a>.
+        This console is helping you navigate the Wander network.
+      </p>
+      <h2>Console Neighbourhood</h2>
+      <p>
+        Your host console lists the following consoles as its
+        neighbours:
       </p>
       <ul id="console-dialog-list"></ul>
       <p>
-        Note that you don't really need to change console to browse
-        the Wander network.  This console can fetch recommendations
-        from other consoles, then from the consoles they link to and
-        so on recursively.  However, you can switch consoles if you
-        prefer to browse the network from another website.
+        You can wander to a neighbouring console by clicking one of
+        the links above.  Note that you do not really need to change
+        console to browse the Wander network.  The host console can
+        fetch recommendations from other consoles, then from the
+        consoles they link to and so on recursively.
+      </p>
+      <h2>Wandering History</h2>
+      <p>
+        Your wandering history in reverse chronological order:
+      </p>
+      <ul id="history-list"></ul>
+      <p>
+        Each item above includes three links: the page recommended to
+        you, the console that recommended it and the wander.js file of
+        that console.
       </p>
       <footer><form method="dialog"><button>Close</button></form></footer>
     </dialog>
