@@ -1,5 +1,5 @@
 <!--
-  Wander 0.2.0.dev5
+  Wander 0.2.0.dev6
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -132,7 +132,7 @@
     <script src="wander.js"></script>
     <script>
       const LOGGING = true
-      const VERSION = '0.2.0.dev5'
+      const VERSION = '0.2.0.dev6'
       const KEEP_CONSOLES = 1000
 
       let consoles = window.wander.consoles
@@ -223,7 +223,7 @@
       }
 
       function pickNewConsole () {
-        let url = wanderJSURL(pick(filter(consoles)))
+        const url = wanderJSURL(pick(filter(consoles)))
         const script = document.createElement('script')
         log('Loading next console:', url)
         script.addEventListener('load', function () {
