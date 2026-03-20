@@ -31,6 +31,7 @@ Contents
   * [Wander vs Kagi Small Web](#wander-vs-kagi-small-web)
   * [Wander vs StumbleUpon](#wander-vs-stumbleupon)
   * [Wander vs Webrings](#wander-vs-webrings)
+* [Contributing](#contributing)
 * [Support](#support)
 * [Licence](#licence)
 
@@ -264,6 +265,7 @@ an inspiration behind Wander.  While there is a lot of similarity with
 such services, there are some differences as well.  These differences
 are noted in the following subsections.
 
+
 ### Wander vs Kagi Small Web
 
 [Kagi Small Web][kagi] currently accepts only blogs, comics and
@@ -302,6 +304,41 @@ which other consoles to link to.  This means you are in full control
 of your recommendations and your Wander neighbourhood.
 
 [stumble]: https://en.wikipedia.org/wiki/StumbleUpon
+
+
+Contributing
+------------
+
+Here are a few things to keep in mind when submitting fixes and
+improvements:
+
+ 1. Please create a new pull request for your contribution.
+
+ 2. After opening a pull request, please be patient.  I have a very
+    busy schedule and cannot review changes quickly.  I am currently
+    busy with a few academical pursuits, so I will have limited time
+    to collaborate on pull requests until June 2026.  I will still try
+    to review submissions whenever I can during breaks.  (This tool
+    itself was written during one such break.)
+
+ 3. The smaller the change, the easier it will be for me to review and
+    merge the changes.
+
+ 4. I may not merge every change, so please keep that in mind when
+    deciding how much time to invest in a contribution.  I do not want
+    you to feel too disappointed if a change is not merged.  I
+    generally recommend making changes that are useful to you first
+    and foremost.  That way, even if your contribution is not merged,
+    it will still be valuable to you and something you can continue
+    using for yourself.
+
+ 5. I know my code is not the most modern way to write JavaScript.
+    Still, I would appreciate it if any new code follows the existing
+    style as much as possible.
+
+ 6. Run `make deps` and `make checks` to catch code style issues
+    before sending your pull request.  If you do not have `make`,
+    refer to the `Makefile` and run the listed commands manually.
 
 
 Support
