@@ -25,6 +25,9 @@ Contents
 * [Wandering the Web](#wandering-the-web)
 * [Install](#install)
 * [Customise Your Console](#customise-your-console)
+  * [Custom CSS](#custom-css)
+  * [Custom JS](#custom-js)
+  * [Customisation Order](#customisation-order)
 * [Caution](#caution)
 * [Design](#design)
 * [Comparisons](#comparisons)
@@ -179,7 +182,11 @@ Customise Your Console
 
 You can customise the look and feel of your console by adding custom
 CSS files.  You can also customise the functionality of your console
-by adding custom JavaScript files.
+by adding custom JavaScript files.  Further, you can customise which
+URLs your console should never load.
+
+
+### Customise CSS
 
 To add a custom stylesheet, say, `style.css` to your console, edit
 your `wander.js` file and add a `styles` property:
@@ -194,6 +201,12 @@ window.wander = {
 }
 ```
 
+The value of the `styles` property is a list of CSS filenames.  These
+filenames may be paths relative to your `index.html` or absolute URLs.
+
+
+### Customise JS
+
 Similarly, to add a custom script, say, `script.js`, add a `scripts`
 property:
 
@@ -207,10 +220,35 @@ window.wander = {
 }
 ```
 
-The value of the `styles` property is a list of CSS filenames.
-Similarly, the value of the `scripts` property is a list of JavaScript
-filenames.  These filenames may be paths relative to your `index.html`
-or absolute URLs.  Files are loaded in the following order:
+The value of the `scripts` property is a list of JavaScript filenames.
+These filenames may be paths relative to your `index.html` or absolute
+URLs.
+
+
+### Customise Ignore List
+
+To block certain URLs from loading on your console, add or edit the
+`ignores` property:
+
+```javascript
+window.wander = {
+  consoles: [],
+  pages: [],
+  ignore: [
+    '.*://example\\.com/.*',
+    '.*://example\\.net/.*',
+  ]
+}
+```
+
+Each entry in the ignore list is a string representing a regular
+expression pattern.  If a console URL or a web page URL matches one of
+the given patterns, your console will never load it.
+
+
+### Customisation Order
+
+Customisation files are loaded in the following order:
 
 1. The console's own built-in stylesheet and script load first.
 2. Then the console loads all the custom stylesheets in the order specified.
