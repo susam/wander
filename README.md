@@ -23,7 +23,7 @@ Contents
 
 * [How It Works](#how-it-works)
 * [Wandering the Web](#wandering-the-web)
-* [Setup](#setup)
+* [Install](#install)
 * [Caution](#caution)
 * [Design](#design)
 * [Comparisons](#comparisons)
@@ -105,8 +105,8 @@ console owners style their consoles differently, so you may encounter
 a few quirky consoles when switching consoles.
 
 
-Setup
------
+Install
+-------
 
 1. Download this bundle:
    https://codeberg.org/susam/wander/archive/wander.zip
@@ -259,7 +259,7 @@ so it may not be very polished and the list of websites is quite small
 as well.  But the list is growing.  I am adding some finishing touches
 too whenever I can spare some time from my otherwise busy schedule.
 If you encounter a bug, [please let me know][ISSUES].  If you like the
-idea, I would be glad if you [join the network](#setup).
+idea, I would be glad if you [join the network](#install).
 
 [ISSUES]: https://codeberg.org/susam/wander/issues
 
