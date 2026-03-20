@@ -1,5 +1,5 @@
 <!--
-  Wander 0.2.0.dev3
+  Wander 0.2.0.dev4
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -90,10 +90,10 @@
         background: #000;
         opacity: 0.7;
       }
-      #urlw, #bReload, #bGo, #bCopy {
+      #url-wide-input, #reload-button, #go-button, #copy-button {
         display: none;
       }
-      #urln {
+      #url-narrow-input {
         margin-right: 0;
       }
       noscript {
@@ -117,13 +117,13 @@
         iframe {
           height: calc(100vh - 5.5em);
         }
-        #urln {
+        #url-narrow-input {
           display: none;
         }
-        #bReload, #bGo, #bCopy, #urlw {
+        #reload-button, #go-button, #copy-button, #url-wide-input {
           display: inline-block;
         }
-        #urlw {
+        #url-wide-input {
           width: 25em;
         }
       }
@@ -133,27 +133,33 @@
       const LOGGING = true
       const VERSION = '0.2.0.dev3'
       const KEEP_CONSOLES = 1000
+
       let consoles = window.wander.consoles
       let pages = window.wander.pages
 
       function init () {
         log(`Wander ${VERSION}`)
-        initConsole()
-        document.getElementById('bWander').addEventListener('click', wanderPage)
-        document.getElementById('bConsole').addEventListener('click', consoleDialog)
-        document.getElementById('bReload').addEventListener('click', reloadFrame)
-        document.getElementById('bGo').addEventListener('click', goLink)
-        document.getElementById('bCopy').addEventListener('click', copyLink)
-        document.getElementById('bAbout').addEventListener('click', showAbout)
-        document.getElementById('urln').addEventListener('keydown', keyHandler)
-        document.getElementById('urlw').addEventListener('keydown', keyHandler)
-        document.getElementById('version').textContent = VERSION
-        wanderPage()
+        initListeners()
+        initConsoleList()
+        initVersion()
+        loadNewPage()
         log('Initialised')
       }
 
-      function initConsole () {
-        const ul = document.getElementById('wanderers')
+      function initListeners () {
+        document.getElementById('about-button').addEventListener('click', showAboutDialog)
+        document.getElementById('console-button').addEventListener('click', showConsoleDialog)
+        document.getElementById('copy-button').addEventListener('click', copyURL)
+        document.getElementById('go-button').addEventListener('click', gotoURL)
+        document.getElementById('reload-button').addEventListener('click', reloadPage)
+        document.getElementById('url-narrow-input').addEventListener('keydown', handleURLInput)
+        document.getElementById('url-wide-input').addEventListener('keydown', handleURLInput)
+        document.getElementById('wander-button').addEventListener('click', loadNewPage)
+        document.getElementById('wander-iframe').addEventListener('load', wanderDone)
+      }
+
+      function initConsoleList () {
+        const ul = document.getElementById('console-dialog-list')
         for (const url of window.wander.consoles) {
           const li = document.createElement('li')
           const a = document.createElement('a')
@@ -162,53 +168,61 @@
           a.href = url
           a.textContent = url
         }
-        document.getElementById('iframe').addEventListener('load', wanderDone)
       }
 
-      function wanderPage () {
-        const iframe = document.getElementById('iframe')
+      function initVersion () {
+        for (const element of document.querySelectorAll('.version')) {
+          element.textContent = VERSION
+        }
+      }
+
+      function loadNewPage () {
+        const iframe = document.getElementById('wander-iframe')
         const url = pick(filter(pages))
-        document.getElementById('urln').value = url
-        document.getElementById('urlw').value = url
+        document.getElementById('url-narrow-input').value = url
+        document.getElementById('url-wide-input').value = url
         iframe.src = url
-        log('Wandering to', url)
+        log('Loading new page:', url)
       }
 
       function wanderDone () {
-        const iframe = document.getElementById('iframe')
-        log('Wandering complete')
+        const iframe = document.getElementById('wander-iframe')
+        log('Loaded new page')
         if (iframe.style.display !== 'block') {
           iframe.style.display = 'block'
           log('Displayed iframe')
         }
         iframe.focus()
-        loadConsole()
+        pickNewConsole()
       }
 
-      function consoleDialog () {
-        document.getElementById('dConsole').showModal()
+      function showConsoleDialog () {
+        document.getElementById('console-dialog').showModal()
       }
 
-      function loadConsole () {
-        let url = pick(filter(consoles))
-        if (!url.endsWith('/')) {
-          url += '/'
-        }
-        url += 'wander.js'
+      function pickNewConsole () {
+        let url = wanderJSURL(pick(filter(consoles)))
         const script = document.createElement('script')
-        log('Loading next console', url)
+        log('Loading next console:', url)
         script.addEventListener('load', function () {
-          log('Loaded next console', url)
+          log('Loaded next console:', url)
           collectConsoles(window.wander.consoles)
           collectPages(window.wander.pages)
           script.remove()
         })
         script.addEventListener('error', function (e) {
           script.remove()
-          log('Failed to load next console', url, e)
+          log('Cannot load next console:', url, e, e.message)
         })
         script.src = url
         document.head.append(script)
+      }
+
+      function wanderJSURL (consoleURL) {
+        if (!consoleURL.endsWith('/')) {
+          consoleURL += '/'
+        }
+        return consoleURL + 'wander.js'
       }
 
       function collectConsoles (newConsoles) {
@@ -220,50 +234,58 @@
         if (consoles.length > KEEP_CONSOLES) {
           consoles = consoles.slice(KEEP_CONSOLES - consoles.length)
         }
-        log('Consoles discovered so far:', consoles.length)
+        log('Console URLs in cache:', consoles.length)
       }
 
       function collectPages (newPages) {
         if (newPages.length > 0) {
           pages = newPages
-          log('Number of pages set:', pages.length)
+          log('Page URLs in cache:', pages.length)
         } else {
-          log('No new pages; number of pages left intact:', pages.length)
+          log('Empty page list; cached page URLs left intact:', pages.length)
         }
       }
 
-      function reloadFrame () {
-        const iframe = document.getElementById('iframe')
+      function reloadPage () {
+        const iframe = document.getElementById('wander-iframe')
         const src = iframe.src
         iframe.src = src
       }
 
-      function keyHandler (e) {
+      function handleURLInput (e) {
         if (e.key === 'Enter') {
-          goLink()
+          gotoURL()
         }
       }
 
-      function goLink () {
+      function gotoURL () {
         let value = visibleInput().value
         if (!value.toLowerCase().startsWith('https:') &&
             !value.toLowerCase().startsWith('http:')) {
           value = matchingProtocol() + '//' + value
         }
-        document.getElementById('urln').value = value
-        document.getElementById('urlw').value = value
-        document.getElementById('iframe').src = value
+        document.getElementById('url-narrow-input').value = value
+        document.getElementById('url-wide-input').value = value
+        document.getElementById('wander-iframe').src = value
       }
 
-      function copyLink () {
+      function matchingProtocol () {
+        let protocol = window.location.protocol
+        if (protocol !== 'http:' && protocol !== 'https:') {
+          protocol = 'https:'
+        }
+        return protocol
+      }
+
+      function copyURL () {
         const input = visibleInput()
         input.select()
         document.execCommand('copy')
-        window.setTimeout(function () { input.blur() }, 125)
+        window.setTimeout(function () { input.blur() }, 150)
       }
 
-      function showAbout () {
-        document.getElementById('dAbout').showModal()
+      function showAboutDialog () {
+        document.getElementById('about-dialog').showModal()
       }
 
       function pick (items) {
@@ -277,23 +299,16 @@
       }
 
       function visibleInput () {
-        const urln = document.getElementById('urln')
-        const urlw = document.getElementById('urlw')
-        return urln.offsetParent ? urln : urlw
-      }
-
-      function matchingProtocol () {
-        let protocol = window.location.protocol
-        if (protocol !== 'http:' && protocol !== 'https:') {
-          protocol = 'https:'
-        }
-        return protocol
+        const urlNarrowInput = document.getElementById('url-narrow-input')
+        const urlWideInput = document.getElementById('url-wide-input')
+        return urlNarrowInput.offsetParent ? urlNarrowInput : urlWideInput
       }
 
       function log () {
         if (LOGGING) {
           const args = Array.prototype.slice.call(arguments)
-          console.log('[wander] ' + args.join(' '))
+          args.unshift('[wander]')
+          console.log.apply(console, args)
         }
       }
 
@@ -303,17 +318,17 @@
   <body>
     <noscript>JavaScript is required to use this application.</noscript>
     <header>
-      <button id="bWander">Wander</button><!--
-      --><button id="bConsole">Console</button><!--
-      --><button id="bReload">Reload</button><!--
-      --><input id="urlw" autocomplete="off"><!--
-      --><button id="bGo">Go</button><!--
-      --><button id="bCopy">Copy</button><!--
-      --><button id="bAbout">About</button><!--
-      --><input id="urln">
+      <button id="wander-button">Wander</button><!--
+      --><button id="console-button">Console</button><!--
+      --><button id="reload-button">Reload</button><!--
+      --><input id="url-wide-input" autocomplete="off"><!--
+      --><button id="go-button">Go</button><!--
+      --><button id="copy-button">Copy</button><!--
+      --><button id="about-button">About</button><!--
+      --><input id="url-narrow-input">
     </header>
-    <iframe id="iframe"></iframe>
-    <dialog id="dConsole">
+    <iframe id="wander-iframe"></iframe>
+    <dialog id="console-dialog">
       <header>
         <h1>Wander to Another Console</h1><form method="dialog"><button>x</button></form>
       </header>
@@ -323,7 +338,7 @@
         different website.  You can then continue wandering the Web
         using the console on that website.
       </p>
-      <ul id="wanderers"></ul>
+      <ul id="console-dialog-list"></ul>
       <p>
         Note that you don't really need to change console to browse
         the Wander network.  This console can fetch recommendations
@@ -331,14 +346,12 @@
         so on recursively.  However, you can switch consoles if you
         prefer to browse the network from another website.
       </p>
-      <form method="dialog">
-        <button>Close</button>
-      </form>
+      <form method="dialog"><button>Close</button></form>
     </dialog>
-    <dialog id="dAbout">
+    <dialog id="about-dialog">
       <header>
-        <h1>About Wander Console</h1><form method="dialog"><button>x</button></form>
-        <div>Version <span id="version"></span></div>
+        <h1>Wander Console</h1><form method="dialog"><button>x</button></form>
+        <div>Version <span class="version">&nbsp;</span></div>
       </header>
       <p>
         Hello!  You are currently on a Wander console!  A Wander
@@ -367,9 +380,7 @@
         For more information about Wander, please
         see <a href="https://codeberg.org/susam/wander#readme">codeberg.org/susam/wander</a>.
       </p>
-      <form method="dialog">
-        <button>Close</button>
-      </form>
+      <form method="dialog"><button>Close</button></form>
     </dialog>
   </body>
 </html>
