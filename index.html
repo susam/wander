@@ -53,11 +53,11 @@
       }
       input {
         padding-left: 0.5em;
-        width: 19em;
+        width: 18.5em;
       }
       header input:not(:last-of-type),
       header button:not(:last-of-type) {
-        margin-right: 0.5em;
+        margin-right: 0.25em;
       }
       dialog {
         border: thick solid;
@@ -99,7 +99,7 @@
         height: calc(100vh - 12.5em);
         width: 100%;
       }
-      #url-wide-input, #reload-button, #go-button, #copy-button {
+      #url-wide-input, #reload-button, #go-button, #open-button {
         display: none;
       }
       #url-narrow-input {
@@ -121,7 +121,7 @@
         #url-narrow-input {
           display: none;
         }
-        #reload-button, #go-button, #copy-button, #url-wide-input {
+        #reload-button, #go-button, #open-button, #url-wide-input {
           display: inline-block;
         }
         #url-wide-input {
@@ -150,7 +150,7 @@
       function initListeners () {
         document.getElementById('about-button').addEventListener('click', showAboutDialog)
         document.getElementById('console-button').addEventListener('click', showConsoleDialog)
-        document.getElementById('copy-button').addEventListener('click', copyURL)
+        document.getElementById('open-button').addEventListener('click', openURL)
         document.getElementById('go-button').addEventListener('click', gotoURL)
         document.getElementById('reload-button').addEventListener('click', reloadPage)
         document.getElementById('url-narrow-input').addEventListener('keydown', handleURLInput)
@@ -164,8 +164,8 @@
         for (const url of window.wander.consoles) {
           const li = document.createElement('li')
           const a = document.createElement('a')
-          li.append(a)
-          ul.append(li)
+          li.appendChild(a)
+          ul.appendChild(li)
           a.href = url
           a.textContent = url
         }
@@ -216,7 +216,7 @@
           log('Cannot load next console:', url, e, e.message)
         })
         script.src = url
-        document.head.append(script)
+        document.head.appendChild(script)
       }
 
       function wanderJSURL (consoleURL) {
@@ -278,11 +278,8 @@
         return protocol
       }
 
-      function copyURL () {
-        const input = visibleInput()
-        input.select()
-        document.execCommand('copy')
-        window.setTimeout(function () { input.blur() }, 150)
+      function openURL () {
+        window.open(visibleInput().value)
       }
 
       function showAboutDialog () {
@@ -324,7 +321,7 @@
       --><button id="reload-button">Reload</button><!--
       --><input id="url-wide-input" autocomplete="off"><!--
       --><button id="go-button">Go</button><!--
-      --><button id="copy-button">Copy</button><!--
+      --><button id="open-button">Open</button><!--
       --><button id="about-button">About</button><!--
       --><input id="url-narrow-input">
     </header>

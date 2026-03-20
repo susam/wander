@@ -6,7 +6,8 @@ Changelog
 
 ### Added
 
-- Show version number in the about dialog.
+- Show version number in the **About** dialog.
+- Add **Open** button to open a website recommendation in a new tab.
 
 ### Changed
 
@@ -20,6 +21,10 @@ Changelog
 - Title bar and the about dialog now contain the name 'Wander Console'
   rather than just 'Wander'.
 - Use kebab-case names for all HTML element IDs and class names.
+
+### Removed
+
+- Replace **Copy** button with **Open** button.
 
 
 0.1.0 (2025-03-19)
