@@ -18,7 +18,8 @@ Changelog
   consoles.  Previously, only neighbours of the most recently visited
   console were considered.
 - Title bar and the about dialog now contain the name 'Wander Console'
-  rather than just 'Wander'
+  rather than just 'Wander'.
+- Use kebab-case names for all HTML element IDs and class names.
 
 
 0.1.0 (2025-03-19)

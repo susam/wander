@@ -10,29 +10,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+      /* Colours */
       body {
         background: #696;
-        margin: 0;
-        padding: 1em;
-        line-height: 1.5;
       }
       button, input, noscript, dialog {
         background: #bdb;
         border-color: #363;
-        color: #030;
-        font-family: courier, monospace;
-        font-size: medium;
-        font-weight: bold;
+        color: #030
       }
-      button, input {
-        box-sizing: border-box;
-        margin-bottom: 1em;
-        margin-right: 0.25em;
-        min-height: 2.5em;
-        width: 6em;
-      }
-      button {
-        cursor: pointer;
+      dialog {
+        background: #cec;
       }
       button:hover {
         background: #9c9;
@@ -40,55 +28,76 @@
       button:active {
         background: #8c8;
       }
-      header button:last-of-type {
-        margin-right: 0;
+      dialog::backdrop {
+        background: #0009;
+      }
+      /* Dimensions and decorations */
+      body {
+        line-height: 1.5;
+        margin: 0;
+        padding: 1em;
+      }
+      button, input, noscript, dialog {
+        font-family: courier, monospace;
+        font-size: medium;
+        font-weight: bold;
+      }
+      button, input {
+        box-sizing: border-box;
+        margin-bottom: 1em;
+        min-height: 2.5em;
+        width: 6em;
+      }
+      button {
+        cursor: pointer;
       }
       input {
         padding-left: 0.5em;
-        margin-bottom: 1em;
-        width: 18.5em;
+        width: 19em;
+      }
+      header input:not(:last-of-type),
+      header button:not(:last-of-type) {
+        margin-right: 0.5em;
       }
       dialog {
         border: thick solid;
-        max-width: 40em;
+        max-width: 42em;
         max-height: 80vh;
         overflow: auto;
       }
-      dialog h1 {
+      dialog header, dialog footer {
+        text-align: center;
+      }
+      dialog header h1, dialog header form {
+        display: inline-block;
+        vertical-align: top;
+      }
+      dialog header h1 {
         font-size: 1.5em;
         margin: 0;
-        text-align: center;
         padding-left: 2rem;
-        width: calc(100% - 4rem);
-        display: inline-block;
-      }
-      dialog > header > div {
         text-align: center;
-        margin-top: 0;
+        width: calc(100% - 4rem);
       }
-      dialog h1, dialog > header > form {
-        display: inline-block;
-        vertical-align: top;
-      }
-      dialog > header > form > button {
-        padding: 0.25em;
-        width: 2em;
+      dialog header button {
+        box-sizing: border-box;
+        height: auto;
         margin: 0;
         min-height: 0;
-        height: auto;
+        padding: 0.25em;
         vertical-align: top;
+        width: 2em;
+      }
+      dialog footer button {
+        margin-bottom: 0;
+      }
+      iframe {
+        background: #fff;
+        border: thick solid #363;
         box-sizing: border-box;
-      }
-      dialog > form > button {
-        display: block;
-        margin: 2em auto 1em auto;
-      }
-      dialog button {
-        background: #aca;
-      }
-      dialog::backdrop {
-        background: #000;
-        opacity: 0.7;
+        display: none;
+        height: calc(100vh - 12.5em);
+        width: 100%;
       }
       #url-wide-input, #reload-button, #go-button, #copy-button {
         display: none;
@@ -104,14 +113,6 @@
         margin-bottom: 1em;
         padding: 1em;
         text-align: center;
-      }
-      iframe {
-        background: #fff;
-        border: thick solid #363;
-        box-sizing: border-box;
-        display: none;
-        height: calc(100vh - 12.5em);
-        width: 100%;
       }
       @media (min-width: 70em) {
         iframe {
@@ -346,7 +347,7 @@
         so on recursively.  However, you can switch consoles if you
         prefer to browse the network from another website.
       </p>
-      <form method="dialog"><button>Close</button></form>
+      <footer><form method="dialog"><button>Close</button></form></footer>
     </dialog>
     <dialog id="about-dialog">
       <header>
@@ -380,7 +381,7 @@
         For more information about Wander, please
         see <a href="https://codeberg.org/susam/wander#readme">codeberg.org/susam/wander</a>.
       </p>
-      <form method="dialog"><button>Close</button></form>
+      <footer><form method="dialog"><button>Close</button></form></footer>
     </dialog>
   </body>
 </html>
