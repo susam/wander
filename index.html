@@ -146,6 +146,7 @@
 
       const IDLE_MODE = 0
       const WANDERING_MODE = 1
+      const HISTORY_SIZE = 10
 
       const consoles = []
       const pages = []
@@ -297,7 +298,7 @@
         document.getElementById('url-wide-input').value = page.url
         log(`Loading page: ${page.referrer} => ${page.url}`)
         iframe.src = page.url
-        history.push(page)
+        addToHistory(page.url)
       }
 
       function pageLoadDone () {
@@ -419,7 +420,22 @@
       }
 
       function pick (items) {
-        return items[Math.floor(Math.random() * items.length)]
+        let validPick = false
+        let item;
+
+        do {
+          item = items[Math.floor(Math.random() * items.length)]
+
+          const inCurrentHistory = history.indexOf(item.url) > -1;
+          if (inCurrentHistory) {
+            log('Ignored due to being in session history:', item.url)
+            continue
+          }
+
+          validPick = true
+        } while (!validPick)
+
+        return item
       }
 
       function isGoodURL (url) {
@@ -502,6 +518,13 @@
         const urlNarrowInput = document.getElementById('url-narrow-input')
         const urlWideInput = document.getElementById('url-wide-input')
         return urlNarrowInput.offsetParent ? urlNarrowInput : urlWideInput
+      }
+
+      function addToHistory (url) {
+        history.unshift(url)
+        if (history.length > HISTORY_SIZE) {
+          history.pop()
+        }
       }
 
       function test () {
