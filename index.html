@@ -1,5 +1,5 @@
 <!--
-  Wander 0.2.0.dev4
+  Wander 0.2.0.dev5
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -132,7 +132,7 @@
     <script src="wander.js"></script>
     <script>
       const LOGGING = true
-      const VERSION = '0.2.0.dev3'
+      const VERSION = '0.2.0.dev5'
       const KEEP_CONSOLES = 1000
 
       let consoles = window.wander.consoles
@@ -140,11 +140,32 @@
 
       function init () {
         log(`Wander ${VERSION}`)
+        initCustomStyle()
+        initCustomScript()
         initListeners()
         initConsoleList()
         initVersion()
         loadNewPage()
         log('Initialised')
+      }
+
+      function initCustomStyle () {
+        const styles = window.wander.styles || []
+        for (const href of styles) {
+          const link = document.createElement('link')
+          link.rel = 'stylesheet'
+          link.href = href
+          document.head.appendChild(link)
+        }
+      }
+
+      function initCustomScript () {
+        const scripts = window.wander.scripts || []
+        for (const src of scripts) {
+          const script = document.createElement('script')
+          script.src = src
+          document.head.appendChild(script)
+        }
       }
 
       function initListeners () {

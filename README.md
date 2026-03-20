@@ -24,6 +24,7 @@ Contents
 * [How It Works](#how-it-works)
 * [Wandering the Web](#wandering-the-web)
 * [Install](#install)
+* [Customise Your Console](#customise-your-console)
 * [Caution](#caution)
 * [Design](#design)
 * [Comparisons](#comparisons)
@@ -108,6 +109,8 @@ a few quirky consoles when switching consoles.
 Install
 -------
 
+Here are the steps to set up Wander Console on your website:
+
 1. Download this bundle:
    https://codeberg.org/susam/wander/archive/wander.zip
 
@@ -161,7 +164,57 @@ Install
    Hopefully, someone will link to your console and then visitors to
    their console may receive recommendations from your `wander.js`.
 
+**NOTE:** Do not edit the `index.html` file directly.  Keeping your
+`index.html` unmodified makes it easier to update your Wander Console
+UI by downloading new versions of `index.html` and replacing the
+existing file.  If you want to customise the Wander Console UI, follow
+the instructions in [Customise Your Console](#customise-your-console).
+
 [thread]: https://codeberg.org/susam/wander/issues/1
+
+
+Customise Your Console
+----------------------
+
+You can customise the look and feel of your console by adding custom
+CSS files.  You can also customise the functionality of your console
+by adding custom JavaScript files.
+
+To add a custom stylesheet, say, `style.css` to your console, edit
+your `wander.js` file and add a `styles` property:
+
+```javascript
+window.wander = {
+  consoles: [],
+  pages: [],
+  styles: [
+    'style.css',
+  ]
+}
+```
+
+Similarly, to add a custom script, say, `script.js`, add a `scripts`
+property:
+
+```javascript
+window.wander = {
+  consoles: [],
+  pages: [],
+  scripts: [
+    'script.js',
+  ]
+}
+```
+
+The value of the `styles` property is a list of CSS filenames.
+Similarly, the value of the `scripts` property is a list of JavaScript
+filenames.  These filenames may be paths relative to your `index.html`
+or absolute URLs.  Files are loaded in the following order:
+
+1. The console's own built-in stylesheet and script load first.
+2. Then the console loads all the custom stylesheets in the order specified.
+3. Then it loads all the custom scripts in the order specified.
+4. Finally, it sets up the console with a randomly chosen website.
 
 
 Caution

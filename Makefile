@@ -21,7 +21,7 @@ dist:
 	git checkout -b wander
 	git rm *.md Makefile .gitignore
 	VER=$$(grep VERSION index.html | head -n 1 | cut -d "'" -f2);
-	git commit -m "Create distributable bundle for Wander $VER"
+	git commit -m "Create distributable bundle for Wander Console $$VER"
 	git push -f cb wander
 	git push -f gh wander
 	ls -l
