@@ -1,4 +1,4 @@
-window.wander = {
+const wander = {
   // Other Wander consoles that visitors can reach from my console.
   consoles: [
     'https://susam.net/wander/',
@@ -17,7 +17,7 @@ window.wander = {
   ignore: [
     // Off-topic since these are commercial services, not personal websites.
     '.*://medium\\.com/.*',
-    '.*://substack\\.com/.*',
+    '.*://.*\\.substack\\.com/.*',
 
     // These do not load in the console due to frame-embedding restrictions.
     '.*://cari\\.institute/.*',

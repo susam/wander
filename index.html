@@ -1,5 +1,5 @@
 <!--
-  Wander 0.2.0.dev7
+  Wander 0.2.0.dev8
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -139,7 +139,7 @@
     <script src="wander.js"></script>
     <script>
       const LOGGING = true
-      const VERSION = '0.2.0.dev7'
+      const VERSION = '0.2.0.dev8'
       const KEEP_CONSOLES = 1000
 
       const consoles = []
@@ -147,7 +147,6 @@
       const ignores = []
       const history = []
 
-      let newConsoleURL = window.location.href
       let consolesFound = 0
 
       function init () {
@@ -157,15 +156,15 @@
         initListeners()
         initConsoleList()
         initVersion()
-        collectIgnores(window.wander.ignore)
-        collectConsoles(window.wander.consoles)
-        collectPages(window.wander.pages)
+        collectIgnores(wander.ignore)
+        collectConsoles(window.location.href, wander.consoles)
+        collectPages(window.location.href, wander.pages)
         loadNewPage()
         log('Initialised')
       }
 
       function initCustomStyle () {
-        const styles = window.wander.styles || []
+        const styles = wander.styles || []
         for (const href of styles) {
           const link = document.createElement('link')
           link.rel = 'stylesheet'
@@ -175,7 +174,7 @@
       }
 
       function initCustomScript () {
-        const scripts = window.wander.scripts || []
+        const scripts = wander.scripts || []
         for (const src of scripts) {
           const script = document.createElement('script')
           script.src = src
@@ -193,11 +192,12 @@
         document.getElementById('url-wide-input').addEventListener('keydown', handleURLInput)
         document.getElementById('wander-button').addEventListener('click', loadNewPage)
         document.getElementById('wander-iframe').addEventListener('load', wanderDone)
+        window.addEventListener('message', collectConsoleData)
       }
 
       function initConsoleList () {
         const ul = document.getElementById('console-dialog-list')
-        for (const url of window.wander.consoles) {
+        for (const url of wander.consoles) {
           const li = document.createElement('li')
           const a = document.createElement('a')
           li.append(a)
@@ -219,20 +219,20 @@
         }
       }
 
-      function collectConsoles (urls) {
+      function collectConsoles (consoleURL, urls) {
         for (const url of urls) {
           const normURL = normaliseWanderURL(normaliseURL(url))
           if (duplicateURL(consoles, normURL)) {
-            log(`Skipped duplicate console URL: ${newConsoleURL} => ${normURL}`)
+            log(`Skipped duplicate console URL: ${consoleURL} => ${normURL}`)
             continue
           }
           if (ignoredURL(ignores, normURL)) {
-            log(`Skipped ignored console URL: ${newConsoleURL} => ${normURL}`)
+            log(`Skipped ignored console URL: ${consoleURL} => ${normURL}`)
             continue
           }
-          consoles.push({ referrer: newConsoleURL, url: normURL })
+          consoles.push({ referrer: consoleURL, url: normURL })
           consolesFound++
-          log(`Added console URL: ${newConsoleURL} => ${normURL} ` +
+          log(`Added console URL: ${consoleURL} => ${normURL} ` +
               `(total ${consolesFound}, cached ${consoles.length})`)
         }
         if (consoles.length > KEEP_CONSOLES) {
@@ -242,16 +242,16 @@
             `(total ${consolesFound}, cached ${consoles.length})`)
       }
 
-      function collectPages (urls) {
+      function collectPages (consoleURL, urls) {
         const goodPages = []
         for (const url of urls) {
           const normURL = normaliseURL(url)
           if (ignoredURL(ignores, normURL)) {
-            log(`Skipped ignored page URL: ${newConsoleURL} => ${normURL}`)
+            log(`Skipped ignored page URL: ${consoleURL} => ${normURL}`)
             continue
           }
-          goodPages.push({ referrer: newConsoleURL, url: normURL })
-          log(`Added page URL: ${newConsoleURL} => ${normURL} (cached ${goodPages.length})`)
+          goodPages.push({ referrer: consoleURL, url: normURL })
+          log(`Added page URL: ${consoleURL} => ${normURL} (cached ${goodPages.length})`)
         }
         if (goodPages.length > 0) {
           pages.length = 0
@@ -319,22 +319,19 @@
       function pickNewConsole () {
         const console = pick(filter(consoles))
         const jsURL = console.url + 'wander.js'
-        const script = document.createElement('script')
-        log('Loading next console:', jsURL)
-        script.addEventListener('load', function () {
-          log('Loaded next console:', jsURL)
-          collectConsoles(window.wander.consoles)
-          collectPages(window.wander.pages)
-          script.remove()
-        })
-        script.addEventListener('error', function (e) {
-          script.remove()
-          log('Cannot load next console:', jsURL, e)
-        })
-        script.src = jsURL
-        document.head.append(script)
-        newConsoleURL = console.url
-        log('Next console processed:', newConsoleURL)
+        const consoleURLAsCode = JSON.stringify(console.url)
+        const sandbox = document.getElementById('sandbox-iframe')
+        log('Loading next console:', console.url)
+        sandbox.srcdoc = `
+          <script src="${jsURL}"><\/script>
+          <script>parent.postMessage({wander: wander, url: ${consoleURLAsCode}}, '*')<\/script>
+        `
+      }
+
+      function collectConsoleData (e) {
+        log('Loaded next console:', e.data.url)
+        collectConsoles(e.data.url, e.data.wander.consoles)
+        collectPages(e.data.url, e.data.wander.pages)
       }
 
       function normaliseWanderURL (url) {
@@ -444,6 +441,7 @@
       --><input id="url-narrow-input">
     </header>
     <iframe id="wander-iframe"></iframe>
+    <iframe id="sandbox-iframe" sandbox="allow-scripts"></iframe>
     <dialog id="console-dialog">
       <header>
         <h1>Console Explorer</h1><form method="dialog"><button>x</button></form>

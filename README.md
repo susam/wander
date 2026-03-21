@@ -115,31 +115,10 @@ Install
 
 Here are the steps to set up Wander Console on your website:
 
-1. **CAUTION:** Before installing Wander Console on your website,
-   ensure that your site does not implement any security-sensitive
-   features such as authentication, session cookies or storage of
-   sensitive data in the browser (including local or session storage).
-   Wander Console loads `wander.js` files from other participants.  A
-   malicious participant could serve a crafted `wander.js` file that
-   accesses any data available to your site in the user's browser (for
-   example, cookies, storage, DOM data or tokens embedded in pages).
-
-   **Do not install Wander Console on any website or domain that
-   handles sensitive user data or authenticated sessions.**
-
-   In particular, avoid installing it on websites or domains that
-   expose APIs, administrative interfaces or any functionality that
-   relies on browser-stored credentials or tokens.
-
-   Only proceed if you are certain that your website and your domain
-   is purely static and does not use authentication, cookies, local
-   storage, session storage or any other browser-accessible sensitive
-   data.
-
-2. Download this bundle:
+1. Download this bundle:
    https://codeberg.org/susam/wander/archive/wander.zip
 
-3. Extract the following files:
+2. Extract the following files:
 
    - `index.html`
    - `wander.js`
@@ -147,7 +126,7 @@ Here are the steps to set up Wander Console on your website:
    These are the only two files you need.  You can delete everything
    else.
 
-4. Place them on your website, for example:
+3. Place them on your website, for example:
 
    ```
    wander/
@@ -155,16 +134,16 @@ Here are the steps to set up Wander Console on your website:
    └── wander.js
    ```
 
-5. Open `wander.js` and edit the following JavaScript object:
+4. Open `wander.js` and edit the following JavaScript object:
 
    ```javascript
-   window.wander = {
+   const wander = {
      consoles: [],
      pages: [],
    }
    ```
 
-   Please see https://susam.net/wander/wander.js for an example.
+   Please see https://susa,xfm.net/wander/wander.js for an example.
 
    The value for the `consoles` property is a list of console URLs
    that you want to link to from your console.  This defines your
@@ -189,7 +168,7 @@ Here are the steps to set up Wander Console on your website:
    Hopefully, someone will link to your console and then visitors to
    their console may receive recommendations from your `wander.js`.
 
-**NOTE:** Do not edit the `index.html` file directly.  Keeping your
+**Tip:** Do not edit the `index.html` file directly.  Keeping your
 `index.html` unmodified makes it easier to update your Wander Console
 UI by downloading new versions of `index.html` and replacing the
 existing file.  If you want to customise the Wander Console UI, follow
@@ -213,7 +192,7 @@ To add a custom stylesheet, say, `style.css` to your console, edit
 your `wander.js` file and add a `styles` property:
 
 ```javascript
-window.wander = {
+const wander = {
   consoles: [],
   pages: [],
   styles: [
@@ -232,7 +211,7 @@ Similarly, to add a custom script, say, `script.js`, add a `scripts`
 property:
 
 ```javascript
-window.wander = {
+const wander = {
   consoles: [],
   pages: [],
   scripts: [
@@ -252,7 +231,7 @@ To block certain URLs from loading on your console, add or edit the
 `ignores` property:
 
 ```javascript
-window.wander = {
+const wander = {
   consoles: [],
   pages: [],
   ignore: [
