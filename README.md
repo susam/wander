@@ -115,10 +115,31 @@ Install
 
 Here are the steps to set up Wander Console on your website:
 
-1. Download this bundle:
+1. **CAUTION:** Before installing Wander Console on your website,
+   ensure that your site does not implement any security-sensitive
+   features such as authentication, session cookies or storage of
+   sensitive data in the browser (including local or session storage).
+   Wander Console loads `wander.js` files from other participants.  A
+   malicious participant could serve a crafted `wander.js` file that
+   accesses any data available to your site in the user's browser (for
+   example, cookies, storage, DOM data or tokens embedded in pages).
+
+   **Do not install Wander Console on any website or domain that
+   handles sensitive user data or authenticated sessions.**
+
+   In particular, avoid installing it on websites or domains that
+   expose APIs, administrative interfaces or any functionality that
+   relies on browser-stored credentials or tokens.
+
+   Only proceed if you are certain that your website and your domain
+   is purely static and does not use authentication, cookies, local
+   storage, session storage or any other browser-accessible sensitive
+   data.
+
+2. Download this bundle:
    https://codeberg.org/susam/wander/archive/wander.zip
 
-2. Extract the following files:
+3. Extract the following files:
 
    - `index.html`
    - `wander.js`
@@ -126,7 +147,7 @@ Here are the steps to set up Wander Console on your website:
    These are the only two files you need.  You can delete everything
    else.
 
-3. Place them on your website, for example:
+4. Place them on your website, for example:
 
    ```
    wander/
@@ -134,7 +155,7 @@ Here are the steps to set up Wander Console on your website:
    └── wander.js
    ```
 
-4. Open `wander.js` and edit the following JavaScript object:
+5. Open `wander.js` and edit the following JavaScript object:
 
    ```javascript
    window.wander = {
@@ -162,7 +183,7 @@ Here are the steps to set up Wander Console on your website:
    console, it uses this list to pick a recommendation at random and
    present it to its user.
 
-5. Once your console is live, share it with others in the following
+6. Once your console is live, share it with others in the following
    community thread: [codeberg.org/susam/wander/issues/1][thread]
 
    Hopefully, someone will link to your console and then visitors to
@@ -251,7 +272,8 @@ the given patterns, your console will never load it.
 Customisation files are loaded in the following order:
 
 1. The console's own built-in stylesheet and script load first.
-2. Then the console loads all the custom stylesheets in the order specified.
+2. Then the console loads all the custom stylesheets in the order
+   specified.
 3. Then it loads all the custom scripts in the order specified.
 4. Finally, it sets up the console with a randomly chosen website.
 
@@ -387,12 +409,11 @@ improvements:
 Support
 -------
 
-I put this together in the early hours of morning today (18 Mar 2026),
-so it may not be very polished and the list of websites is quite small
-as well.  But the list is growing.  I am adding some finishing touches
-too whenever I can spare some time from my otherwise busy schedule.
-If you encounter a bug, [please let me know][ISSUES].  If you like the
-idea, I would be glad if you [join the network](#install).
+I put this together in the early hours of a certain morning (18 Mar
+2026), so it may not be very polished and the list of websites is
+quite small as well.  But the list is growing.  I am adding some
+finishing touches too whenever I can spare some time from my otherwise
+busy schedule.  If you encounter a bug, [please let me know][ISSUES].
 
 [ISSUES]: https://codeberg.org/susam/wander/issues
 

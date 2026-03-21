@@ -7,7 +7,7 @@ window.wander = {
   // My favourite websites and pages I recommend to the Wander community.
   pages: [
     'https://susam.net/',
-    'https://susam.net/fizz-buzz-with-cosines.html',
+    'https://susam.net/invaders.html',
   ],
 
   // Websites and consoles to ignore.  When this console serves as

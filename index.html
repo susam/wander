@@ -295,7 +295,6 @@
       function showConsoleDialog () {
         document.getElementById('host-console-link').textContent = window.location.href
         document.getElementById('host-console-link').href = window.location.href
-
         const ul = document.getElementById('history-list')
         ul.textContent = ''
         for (const item of history.slice().reverse()) {
@@ -335,7 +334,7 @@
         script.src = jsURL
         document.head.append(script)
         newConsoleURL = console.url
-        log('Next console:', newConsoleURL)
+        log('Next console processed:', newConsoleURL)
       }
 
       function normaliseWanderURL (url) {
@@ -361,11 +360,8 @@
       }
 
       function gotoURL () {
-        let value = visibleInput().value
-        if (!value.toLowerCase().startsWith('https:') &&
-            !value.toLowerCase().startsWith('http:')) {
-          value = matchingProtocol() + '//' + value
-        }
+        let value = normaliseURL(visibleInput().value)
+        log('Navigating to user entered URL:', value)
         document.getElementById('url-narrow-input').value = value
         document.getElementById('url-wide-input').value = value
         document.getElementById('wander-iframe').src = value
