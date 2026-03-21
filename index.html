@@ -228,8 +228,8 @@
         const prevConsolesFound = consolesFound
         for (const url of urls) {
           const normURL = normaliseWanderURL(url)
-          if (!validURL(normURL)) {
-            log(`Skipped invalid console URL: ${consoleURL} => ${normURL}`)
+          if (!goodURL(normURL)) {
+            log(`Skipped incompatible console URL: ${consoleURL} => ${normURL}`)
             continue
           }
           if (duplicateURL(consoles, normURL)) {
@@ -259,8 +259,8 @@
       function collectPages (consoleURL, urls) {
         const goodPages = []
         for (const newURL of urls) {
-          if (!validURL(newURL)) {
-            log(`Skipped invalid page URL: ${consoleURL} => ${newURL}`)
+          if (!goodURL(newURL)) {
+            log(`Skipped incompatible page URL: ${consoleURL} => ${newURL}`)
             continue
           }
           if (ignoredURL(ignores, newURL)) {
@@ -286,7 +286,7 @@
           return
         }
         const iframe = document.getElementById('wander-iframe')
-        const page = pick(filter(pages))
+        const page = pick(pages)
         log('----- BEGIN WANDERING -----')
         mode = WANDERING_MODE
         document.getElementById('url-narrow-input').value = page.url
@@ -347,7 +347,7 @@
           log('WARNING: No valid consoles found')
           return
         }
-        const console = pick(filter(consoles))
+        const console = pick(consoles)
         const jsURL = wanderJSURL(console.url)
         const urlAsCode = JSON.stringify(console.url)
         const sandbox = document.getElementById('sandbox-iframe')
@@ -403,37 +403,14 @@
         return items[Math.floor(Math.random() * items.length)]
       }
 
-      function filter (items) {
-        return items.filter(function (item) {
-          const ignored = ignores.some(function (regex) {
-            return regex.test(item.url)
-          })
-          if (!protocolOkay(item.url)) {
-            log('Ignored due to protocol mismatch:', item.url)
-            return false
-          }
-          if (ignored) {
-            log('Ignored due to explicit ignore:', item.url)
-            return false
-          }
-          return true
-        })
-      }
-
-      function protocolOkay (url) {
-        return true
-      }
-
-      function validURL (s) {
-        if (typeof s !== 'string') {
-          return false
+      function goodURL (url) {
+        if (typeof url === 'string' && URL.canParse(url)) {
+          const mine = window.location.protocol
+          const theirs = new URL(url).protocol
+          return (['file:', 'http:', 'https:'].includes(theirs) &&
+                  ['file:', theirs].includes(mine))
         }
-        try {
-          const url = new URL(s)
-          return url.protocol === 'http:' || url.protocol === 'https:'
-        } catch {
-          return false
-        }
+        return false
       }
 
       function duplicateURL (cache, url) {
