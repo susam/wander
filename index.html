@@ -157,6 +157,7 @@
         initListeners()
         initConsoleList()
         initVersion()
+        collectIgnores(window.wander.ignore)
         collectConsoles(window.wander.consoles)
         collectPages(window.wander.pages)
         loadNewPage()
@@ -209,6 +210,12 @@
       function initVersion () {
         for (const element of document.querySelectorAll('.version')) {
           element.textContent = VERSION
+        }
+      }
+
+      function collectIgnores (patterns) {
+        for (const pattern of patterns) {
+          ignores.push(new RegExp(pattern))
         }
       }
 
