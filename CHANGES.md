@@ -30,6 +30,16 @@ Changelog
 - Replace **Copy** button with **Open** button.
 
 
+### Security
+
+- Execute `wander.js` of remote consoles in a sandbox.  This prevents
+  a remote `wander.js` from running with the same origin as your
+  website.  As a result, it cannot access cookies, local storage or
+  session storage set by your website.  This also prevents a remote
+  `wander.js` from altering your console's user interface, state or
+  behaviour.
+
+
 0.1.0 (2025-03-19)
 ------------------
 

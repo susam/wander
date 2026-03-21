@@ -1,7 +1,7 @@
 checks:
 	sed 's/ method="dialog"//' index.html > /tmp/tmp.html
 	tidy -q -e --warn-proprietary-attributes no /tmp/tmp.html
-	npx standard --plugin html index.html
+	npx standard --plugin html --global wander index.html
 
 deps:
 	npm install --no-save standard eslint-plugin-html
@@ -32,3 +32,6 @@ cp:
 
 pub: cp
 	cd ~/git/susam.net && make copub
+
+serve:
+	python3 -m http.server

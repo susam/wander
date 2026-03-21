@@ -14,7 +14,7 @@
       body {
         background: #696;
       }
-      button, input, noscript, dialog {
+      button, input, dialog, noscript {
         background: #bdb;
         border-color: #363;
         color: #030
@@ -37,7 +37,7 @@
         margin: 0;
         padding: 1em;
       }
-      button, input, noscript, dialog {
+      body, button, input {
         font-family: courier, monospace;
         font-size: medium;
         font-weight: bold;
@@ -142,11 +142,15 @@
       const VERSION = '0.2.0.dev8'
       const KEEP_CONSOLES = 1000
 
+      const IDLE_MODE = 0
+      const WANDERING_MODE = 1
+
       const consoles = []
       const pages = []
       const ignores = []
       const history = []
 
+      let mode = IDLE_MODE
       let consolesFound = 0
 
       function init () {
@@ -156,10 +160,10 @@
         initListeners()
         initConsoleList()
         initVersion()
-        collectIgnores(wander.ignore)
-        collectConsoles(window.location.href, wander.consoles)
-        collectPages(window.location.href, wander.pages)
-        loadNewPage()
+        initIgnores(wander.ignore || [])
+        collectConsoles(window.location.href, wander.consoles || [])
+        collectPages(window.location.href, wander.pages || [])
+        pickPage()
         log('Initialised')
       }
 
@@ -190,9 +194,10 @@
         document.getElementById('reload-button').addEventListener('click', reloadPage)
         document.getElementById('url-narrow-input').addEventListener('keydown', handleURLInput)
         document.getElementById('url-wide-input').addEventListener('keydown', handleURLInput)
-        document.getElementById('wander-button').addEventListener('click', loadNewPage)
-        document.getElementById('wander-iframe').addEventListener('load', wanderDone)
-        window.addEventListener('message', collectConsoleData)
+        document.getElementById('wander-button').addEventListener('click', pickPage)
+        document.getElementById('wander-iframe').addEventListener('load', pageLoadDone)
+        document.getElementById('wander-iframe').addEventListener('error', pageLoadError)
+        window.addEventListener('message', receiveMessage)
       }
 
       function initConsoleList () {
@@ -213,15 +218,20 @@
         }
       }
 
-      function collectIgnores (patterns) {
+      function initIgnores (patterns) {
         for (const pattern of patterns) {
           ignores.push(new RegExp(pattern))
         }
       }
 
       function collectConsoles (consoleURL, urls) {
+        const prevConsolesFound = consolesFound
         for (const url of urls) {
-          const normURL = normaliseWanderURL(normaliseURL(url))
+          const normURL = normaliseWanderURL(url)
+          if (!validURL(normURL)) {
+            log(`Skipped invalid console URL: ${consoleURL} => ${normURL}`)
+            continue
+          }
           if (duplicateURL(consoles, normURL)) {
             log(`Skipped duplicate console URL: ${consoleURL} => ${normURL}`)
             continue
@@ -232,8 +242,12 @@
           }
           consoles.push({ referrer: consoleURL, url: normURL })
           consolesFound++
-          log(`Added console URL: ${consoleURL} => ${normURL} ` +
+          log(`Discovered console URL: ${consoleURL} => ${normURL} ` +
               `(total ${consolesFound}, cached ${consoles.length})`)
+        }
+        if (consolesFound === prevConsolesFound) {
+          log(`No new consoles found at ${wanderJSURL(consoleURL)}`)
+          return
         }
         if (consoles.length > KEEP_CONSOLES) {
           consoles.splice(0, consoles.length - KEEP_CONSOLES)
@@ -244,14 +258,21 @@
 
       function collectPages (consoleURL, urls) {
         const goodPages = []
-        for (const url of urls) {
-          const normURL = normaliseURL(url)
-          if (ignoredURL(ignores, normURL)) {
-            log(`Skipped ignored page URL: ${consoleURL} => ${normURL}`)
+        for (const newURL of urls) {
+          if (!validURL(newURL)) {
+            log(`Skipped invalid page URL: ${consoleURL} => ${newURL}`)
             continue
           }
-          goodPages.push({ referrer: consoleURL, url: normURL })
-          log(`Added page URL: ${consoleURL} => ${normURL} (cached ${goodPages.length})`)
+          if (ignoredURL(ignores, newURL)) {
+            log(`Skipped ignored page URL: ${consoleURL} => ${newURL}`)
+            continue
+          }
+          goodPages.push({ referrer: consoleURL, url: newURL })
+          log(`Discovered page URL: ${consoleURL} => ${newURL} (cached ${goodPages.length})`)
+        }
+        if (goodPages.length === 0) {
+          log(`WARNING: No good pages found at ${wanderJSURL(consoleURL)}`)
+          return
         }
         if (goodPages.length > 0) {
           pages.length = 0
@@ -259,37 +280,42 @@
         }
       }
 
-      function duplicateURL (cache, url) {
-        return cache.some(function (item) {
-          return item.url === url
-        })
-      }
-
-      function ignoredURL (ignores, url) {
-        return ignores.some(function (re) {
-          return re.test(url)
-        })
-      }
-
-      function loadNewPage () {
+      function pickPage () {
+        if (pages.length === 0) {
+          log('WARNING: No valid pages available')
+          return
+        }
         const iframe = document.getElementById('wander-iframe')
         const page = pick(filter(pages))
+        log('----- BEGIN WANDERING -----')
+        mode = WANDERING_MODE
         document.getElementById('url-narrow-input').value = page.url
         document.getElementById('url-wide-input').value = page.url
+        log(`Loading page: ${page.referrer} => ${page.url}`)
         iframe.src = page.url
         history.push(page)
-        log(`Loading page: ${page.referrer} => ${page.url}`)
       }
 
-      function wanderDone () {
+      function pageLoadDone () {
         const iframe = document.getElementById('wander-iframe')
-        log('Loaded new page')
+        log('Loaded page')
         if (iframe.style.display !== 'block') {
           iframe.style.display = 'block'
           log('Displayed iframe')
         }
         iframe.focus()
-        pickNewConsole()
+        if (mode === WANDERING_MODE) {
+          log('----- END WANDERING -----')
+          mode = IDLE_MODE
+          pickConsole()
+        }
+      }
+
+      function pageLoadError (e) {
+        log('ERROR:', e)
+        if (mode === WANDERING_MODE) {
+          log('----- FAILED WANDERING -----')
+        }
       }
 
       function showConsoleDialog () {
@@ -310,38 +336,39 @@
           a1.href = a1.textContent = item.url
           a2.href = item.referrer
           a2.textContent = item.referrer
-          a3.href = item.referrer + 'wander.js'
+          a3.href = wanderJSURL(item.referrer)
           a3.textContent = 'js'
         }
         document.getElementById('console-dialog').showModal()
       }
 
-      function pickNewConsole () {
+      function pickConsole () {
+        if (consoles.length === 0) {
+          log('WARNING: No valid consoles found')
+          return
+        }
         const console = pick(filter(consoles))
-        const jsURL = console.url + 'wander.js'
-        const consoleURLAsCode = JSON.stringify(console.url)
+        const jsURL = wanderJSURL(console.url)
+        const urlAsCode = JSON.stringify(console.url)
         const sandbox = document.getElementById('sandbox-iframe')
         log('Loading next console:', console.url)
+        log('Next console JS URL:', jsURL)
         sandbox.srcdoc = `
-          <script src="${jsURL}"><\/script>
-          <script>parent.postMessage({wander: wander, url: ${consoleURLAsCode}}, '*')<\/script>
-        `
+          <script src="${jsURL}"></scr` + `ipt>
+          <script>
+            parent.postMessage({ wander: wander, url: ${urlAsCode} }, '*')
+          </scr` + 'ipt>'
       }
 
-      function collectConsoleData (e) {
+      function receiveMessage (e) {
+        log('Received message:', e)
+        if (e.source !== document.getElementById('sandbox-iframe').contentWindow) {
+          log('WARNING: Ignored message from untrusted source')
+          return
+        }
         log('Loaded next console:', e.data.url)
         collectConsoles(e.data.url, e.data.wander.consoles)
         collectPages(e.data.url, e.data.wander.pages)
-      }
-
-      function normaliseWanderURL (url) {
-        if (url.endsWith('index.html')) {
-          url = url.slice(0, -'index.html'.length)
-        }
-        if (!url.endsWith('/')) {
-          url += '/'
-        }
-        return url
       }
 
       function reloadPage () {
@@ -357,19 +384,11 @@
       }
 
       function gotoURL () {
-        const value = normaliseURL(visibleInput().value)
-        log('Navigating to user entered URL:', value)
+        const value = normaliseGotoURL(visibleInput().value)
+        log('Navigating to URL:', value)
         document.getElementById('url-narrow-input').value = value
         document.getElementById('url-wide-input').value = value
         document.getElementById('wander-iframe').src = value
-      }
-
-      function matchingProtocol () {
-        let protocol = window.location.protocol
-        if (protocol !== 'http:' && protocol !== 'https:') {
-          protocol = 'https:'
-        }
-        return protocol
       }
 
       function openURL () {
@@ -386,11 +405,10 @@
 
       function filter (items) {
         return items.filter(function (item) {
-          const diffProtocol = !item.url.startsWith(matchingProtocol())
           const ignored = ignores.some(function (regex) {
             return regex.test(item.url)
           })
-          if (diffProtocol) {
+          if (!protocolOkay(item.url)) {
             log('Ignored due to protocol mismatch:', item.url)
             return false
           }
@@ -402,15 +420,62 @@
         })
       }
 
-      function normaliseURL (url) {
+      function protocolOkay (url) {
+        return true
+      }
+
+      function validURL (s) {
+        if (typeof s !== 'string') {
+          return false
+        }
+        try {
+          const url = new URL(s)
+          return url.protocol === 'http:' || url.protocol === 'https:'
+        } catch {
+          return false
+        }
+      }
+
+      function duplicateURL (cache, url) {
+        return cache.some(function (item) {
+          return item.url === url
+        })
+      }
+
+      function ignoredURL (ignores, url) {
+        return ignores.some(function (re) {
+          return re.test(url)
+        })
+      }
+
+      function normaliseGotoURL (url) {
         let result = url.trim()
         const re = /^[A-Za-z][A-Za-z\d+\-.]*:\/\// // RFC 3986, section 3.1.
         if (!re.test(result)) {
-          result = matchingProtocol() + '//' + result
+          let protocol = window.location.protocol
+          if (protocol !== 'http:' && protocol !== 'https:') {
+            protocol = 'https:'
+          }
+          result = protocol + '//' + result
         }
         return new URL(result).href
       }
 
+      function normaliseWanderURL (url) {
+        if (url.endsWith('index.html')) {
+          url = url.slice(0, -'index.html'.length)
+        }
+        if (!url.endsWith('/')) {
+          url += '/'
+        }
+        return url
+      }
+
+      function wanderJSURL (wanderURL) {
+        return normaliseWanderURL(wanderURL) + 'wander.js'
+      }
+
+      // TODO: Eliminate double input fields.
       function visibleInput () {
         const urlNarrowInput = document.getElementById('url-narrow-input')
         const urlWideInput = document.getElementById('url-wide-input')
