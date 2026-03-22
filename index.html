@@ -102,9 +102,11 @@
         background: #fff;
         border: thick solid #363;
         box-sizing: border-box;
-        display: none;
         height: calc(100vh - 12.5em);
         width: 100%;
+      }
+      #sandbox-iframe {
+        display: none;
       }
       #url-wide-input, #reload-button, #go-button, #open-button {
         display: none;
@@ -152,6 +154,8 @@
 
       let mode = IDLE_MODE
       let consolesFound = 0
+
+      const log = LOGGING ? console.log.bind(console, '[Wander]') : function () {}
 
       function init () {
         log(`Wander ${VERSION}`)
@@ -202,7 +206,7 @@
 
       function initConsoleList () {
         const ul = document.getElementById('console-dialog-list')
-        for (const url of wander.consoles) {
+        for (const url of wander.consoles || []) {
           const li = document.createElement('li')
           const a = document.createElement('a')
           li.append(a)
@@ -228,15 +232,15 @@
         const prevConsolesFound = consolesFound
         for (const url of urls) {
           const normURL = normaliseWanderURL(url)
-          if (!goodURL(normURL)) {
+          if (!isGoodURL(normURL)) {
             log(`Skipped incompatible console URL: ${consoleURL} => ${normURL}`)
             continue
           }
-          if (duplicateURL(consoles, normURL)) {
+          if (isDuplicateURL(consoles, normURL)) {
             log(`Skipped duplicate console URL: ${consoleURL} => ${normURL}`)
             continue
           }
-          if (ignoredURL(ignores, normURL)) {
+          if (isIgnoredURL(ignores, normURL)) {
             log(`Skipped ignored console URL: ${consoleURL} => ${normURL}`)
             continue
           }
@@ -259,11 +263,11 @@
       function collectPages (consoleURL, urls) {
         const goodPages = []
         for (const newURL of urls) {
-          if (!goodURL(newURL)) {
+          if (!isGoodURL(newURL)) {
             log(`Skipped incompatible page URL: ${consoleURL} => ${newURL}`)
             continue
           }
-          if (ignoredURL(ignores, newURL)) {
+          if (isIgnoredURL(ignores, newURL)) {
             log(`Skipped ignored page URL: ${consoleURL} => ${newURL}`)
             continue
           }
@@ -361,14 +365,29 @@
       }
 
       function receiveMessage (e) {
-        log('Received message:', e)
+        log(`Received message; origin: ${e.origin}; data: ${e.data}; event:`, e)
+        if (e.origin !== 'null') {
+          log('WARNING: Ignored message from untrusted origin:', e.origin)
+          return
+        }
         if (e.source !== document.getElementById('sandbox-iframe').contentWindow) {
           log('WARNING: Ignored message from untrusted source')
           return
         }
+        if (typeof e.data !== 'object' || e.data === null ||
+            typeof e.data.url !== 'string' ||
+            typeof e.data.wander !== 'object' || e.data.wander === null) {
+          log('WARNING: Ignored dodgy message:', e.data)
+          return
+        }
+        if (!isArrayOfStrings(e.data.wander.consoles) ||
+            !isArrayOfStrings(e.data.wander.pages)) {
+          log('WARNING: Ignored bad console data:', e.data)
+          return
+        }
         log('Loaded next console:', e.data.url)
-        collectConsoles(e.data.url, e.data.wander.consoles)
-        collectPages(e.data.url, e.data.wander.pages)
+        collectConsoles(e.data.url, e.data.wander.consoles || [])
+        collectPages(e.data.url, e.data.wander.pages || [])
       }
 
       function reloadPage () {
@@ -403,7 +422,10 @@
         return items[Math.floor(Math.random() * items.length)]
       }
 
-      function goodURL (url) {
+      function isGoodURL (url) {
+        if (wander._skipURLCheck) {
+          return true
+        }
         if (typeof url === 'string' && URL.canParse(url)) {
           const mine = window.location.protocol
           const theirs = new URL(url).protocol
@@ -413,16 +435,24 @@
         return false
       }
 
-      function duplicateURL (cache, url) {
+      function isDuplicateURL (cache, url) {
         return cache.some(function (item) {
           return item.url === url
         })
       }
 
-      function ignoredURL (ignores, url) {
+      function isIgnoredURL (ignores, url) {
         return ignores.some(function (re) {
           return re.test(url)
         })
+      }
+
+      function isArrayOfStrings (value) {
+        return value === undefined || (
+          Array.isArray(value) && value.every(function (v) {
+            return typeof v === 'string'
+          })
+        )
       }
 
       function normaliseGotoURL (url) {
@@ -449,7 +479,11 @@
       }
 
       function wanderJSURL (wanderURL) {
-        return normaliseWanderURL(wanderURL) + 'wander.js'
+        // This function needs to work with relative paths, e.g.,
+        // 'foo/wander.html' as well for local testing.  That's why we
+        // don't use URL API since it needs complete URLs.
+        const normURL = normaliseWanderURL(wanderURL)
+        return normURL.slice(0, normURL.lastIndexOf('/') + 1) + 'wander.js'
       }
 
       // TODO: Eliminate double input fields.
@@ -457,14 +491,6 @@
         const urlNarrowInput = document.getElementById('url-narrow-input')
         const urlWideInput = document.getElementById('url-wide-input')
         return urlNarrowInput.offsetParent ? urlNarrowInput : urlWideInput
-      }
-
-      function log () {
-        if (LOGGING) {
-          const args = Array.prototype.slice.call(arguments)
-          args.unshift('[Wander]')
-          console.log.apply(console, args)
-        }
       }
 
       window.addEventListener('load', init)

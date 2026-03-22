@@ -1,17 +1,45 @@
+# Linting
+# -------
+
 checks:
 	sed 's/ method="dialog"//' index.html > /tmp/tmp.html
 	tidy -q -e --warn-proprietary-attributes no /tmp/tmp.html
 	npx standard --plugin html --global wander index.html
+	npx standard dev/
 
 deps:
 	npm install --no-save standard eslint-plugin-html
 	if command -v brew; then brew install tidy-html5; fi
+
+
+# Manual Testing
+# --------------
+
+serve:
+	python3 -m http.server
+
+message-injection-console:
+	cp index.html dev/examples/message-injection-console/w.html
+	open http://localhost:8000/dev/examples/message-injection-console/w.html || :
+
+message-injection-page:
+	cp index.html dev/examples/message-injection-page/w.html
+	open dev/examples/message-injection-page/w.html || :
+
+code-injection-console:
+	cp index.html dev/examples/code-injection-console/w.html
+	open dev/examples/code-injection-console/w.html || :
+
+
+# Susam's Personal Make Targets
+# -----------------------------
 
 push:
 	git remote remove cb || :
 	git remote remove gh || :
 	git remote add gh ssh://git@github.com/susam/wander.git
 	git remote add cb ssh://git@codeberg.org/susam/wander.git
+	git remote add origin $$(git remote get-url cb) || :
 	git push cb main
 	git push gh main
 
@@ -32,6 +60,3 @@ cp:
 
 pub: cp
 	cd ~/git/susam.net && make copub
-
-serve:
-	python3 -m http.server
