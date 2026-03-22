@@ -6,10 +6,11 @@ Changelog
 
 ### Added
 
+- Add `styles` property to `wander.js` to support adding custom CSS.
+- Add `scripts` property to `wander.js` to support adding custom JavaScript.
+- Add `ignore` property to `wander.js` to support ignoring specific URLs.
 - Show version number in the **About** dialog.
 - Add an **Open** button to open a website recommendation in a new tab.
-- Add `styles` and `scripts` properties to `wander.js` to allow
-  customising the Wander Console.
 - Display current host console in the **Console** dialog.
 
 ### Changed
@@ -28,7 +29,6 @@ Changelog
 ### Removed
 
 - Replace **Copy** button with **Open** button.
-
 
 ### Security
 

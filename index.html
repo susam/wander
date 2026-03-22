@@ -224,7 +224,7 @@
 
       function initIgnores (patterns) {
         for (const pattern of patterns) {
-          ignores.push(new RegExp(pattern))
+          ignores.push(pattern)
         }
       }
 
@@ -442,9 +442,20 @@
       }
 
       function isIgnoredURL (ignores, url) {
-        return ignores.some(function (re) {
-          return re.test(url)
+        return ignores.some(function (ignore) {
+          return isURLMatchingIgnore(ignore, url)
         })
+      }
+
+      function isURLMatchingIgnore (ignore, url) {
+        function norm (s) {
+          s = s.replace(/^.*:\/\//, '') // Disregard protocol.
+          s = s.replace(/[?#].*$/, '') // Disregard query string and fragment.
+          s = s.toLowerCase() // Disregard case.
+          if (!s.endsWith('/')) s += '/' // Treat foo and foo/ as the same.
+          return s
+        }
+        return norm(url).startsWith(norm(ignore))
       }
 
       function isArrayOfStrings (value) {
@@ -457,7 +468,7 @@
 
       function normaliseGotoURL (url) {
         let result = url.trim()
-        const re = /^[A-Za-z][A-Za-z\d+\-.]*:\/\// // RFC 3986, section 3.1.
+        const re = /^[A-Za-z][A-Za-z0-9+\-.]*:\/\// // RFC 3986, section 3.1.
         if (!re.test(result)) {
           let protocol = window.location.protocol
           if (protocol !== 'http:' && protocol !== 'https:') {
@@ -492,6 +503,31 @@
         const urlWideInput = document.getElementById('url-wide-input')
         return urlNarrowInput.offsetParent ? urlNarrowInput : urlWideInput
       }
+
+      function test () {
+        const assert = console.assert.bind(console)
+
+        assert(isURLMatchingIgnore('', ''))
+        assert(isURLMatchingIgnore('f', 'f'))
+        assert(isURLMatchingIgnore('http://foo/', 'ftp://foo/'))
+        assert(isURLMatchingIgnore('http://foo/', 'http://foo/'))
+        assert(isURLMatchingIgnore('http://foo/', 'http://foo'))
+        assert(isURLMatchingIgnore('http://foo', 'http://foo/'))
+        assert(isURLMatchingIgnore('http://foo/bar.html', 'http://foo/bar.html?hello'))
+
+        assert(!isURLMatchingIgnore('f', ''))
+        assert(!isURLMatchingIgnore('f/', 'fo'))
+        assert(!isURLMatchingIgnore('http://foo/bar', 'http://foo/'))
+        assert(!isURLMatchingIgnore('http://foo/', 'http://foobar'))
+        assert(!isURLMatchingIgnore('http://foo', 'http://foobar'))
+
+        assert(isIgnoredURL(['http://foo/bar'], 'http://foo/bar/'))
+        assert(isIgnoredURL(['http://foo/bar/'], 'http://foo/bar'))
+        assert(isIgnoredURL(['http://foo/bar/'], 'https://foo/bar'))
+        assert(!isIgnoredURL(['http://foo/bar/'], 'https://foo/barx'))
+      }
+
+      test()
 
       window.addEventListener('load', init)
     </script>

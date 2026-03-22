@@ -143,7 +143,7 @@ Here are the steps to set up Wander Console on your website:
    }
    ```
 
-   Please see https://susa,xfm.net/wander/wander.js for an example.
+   Please see https://susam.net/wander/wander.js for an example.
 
    The value for the `consoles` property is a list of console URLs
    that you want to link to from your console.  This defines your
@@ -235,15 +235,93 @@ const wander = {
   consoles: [],
   pages: [],
   ignore: [
-    '.*://example\\.com/.*',
-    '.*://example\\.net/.*',
+    'https://example.com/',
+    'https://example.net/foo/',
   ]
 }
 ```
 
-Each entry in the ignore list is a string representing a regular
-expression pattern.  If a console URL or a web page URL matches one of
-the given patterns, your console will never load it.
+Each entry in the ignore list represents a *pseudo-prefix* pattern
+that console and page URLs are matched against.  If a console URL or a
+web page URL matches one of the given pseudo-prefix patterns, your
+console will never load it.
+
+Let us elaborate what pseudo-prefix pattern means.  To check whether a
+URL matches a pattern, the following normalisation is done on both the
+URL and the pattern:
+
+1. The protocol is removed from the beginning.
+2. Query parameters and fragment identifiers are removed from the end.
+3. The remainder is converted to lowercase.
+4. A trailing forward slash is added if it does not already exist.
+
+A URL is considered to match a pattern if the normalised pattern is a
+prefix of the normalised URL.  This peculiar matching algorithm has
+some desirable effects and some counterintuitive ones:
+
+ 1. An ignore pattern `https://example.com/` ignores all of the
+    following URLs:
+
+    ```
+    http://example.com/
+    https://example.com/
+    https://example.com/foo/
+    ftp://example.com/
+    ```
+
+ 2. An ignore pattern `https://example.com/foo` ignores all of the
+    following URLs:
+
+    ```
+    https://example.com/foo
+    https://example.com/foo/
+    https://example.com/foo/bar
+    ```
+
+    But counterintuitively, it does not ignore the URL
+    `https://example.com/foobar` because the normalised pattern
+    `://example.com/foo/` is not a prefix of the normalised URL
+    `://example.com/foobar`.
+
+ 3. An ignore pattern `https://example.com/foo/` is equivalent to the
+    previous one.  This one makes it more obvious why it doesn't match
+    `https://example.com/foobar`.
+
+ 4. An ignore pattern `https://example.com/foo?p=hello` matches all of
+    the following URLs:
+
+    ```
+    https://example.com/foo
+    https://example.com/foo/
+    https://example.com/foo?p=world
+    https://example.com/foo#chapter1
+    https://example.com/foo/bar/
+    ```
+
+ 5. An ignore pattern `https://example.com/foo/#world` is equivalent
+    to the previous one.
+
+ 6. An ignore pattern `httpS://Example.COM/Foo` matches all of the following URLs:
+
+    ```
+    https://example.com/foo
+    HTTPS://EXAMPLE.COM/FOO
+    Https://EXAMPLE.com/foO
+    ```
+
+The last example demonstrates that prefix matching is
+case-insensitive.  This can be counterintuitive because that a URL
+like `https://example.com/foo` would match `https://example.com/FOO`
+as well, even though it is quite possible that they are two distinct
+pages serving different content.
+
+An alternative approach would be to perform case-insensitive matching
+only for the domain part and case-sensitive matching for the
+remainder.  However, we have decided to go with the above algorithm
+for the sake of simplicity and brevity in both code and documentation.
+This algorithm takes only 8 lines to implement.  A more sophisticated
+solution that feels more intuitive for all edge cases would take
+significantly more code and would also take longer to explain.
 
 
 ### Customisation Order

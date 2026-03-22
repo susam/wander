@@ -10,17 +10,15 @@ const wander = {
     'https://susam.net/invaders.html',
   ],
 
-  // Websites and consoles to ignore.  When this console serves as
-  // your host console, it will never contact consoles or recommend
-  // web pages with addresses that match the following regular
-  // expression patterns.
+  // Websites and consoles to ignore.  My console will never fetch
+  // consoles or web pages whose URLs match the following patterns.
   ignore: [
-    // Off-topic since these are commercial services, not personal websites.
-    '.*://medium\\.com/.*',
-    '.*://.*\\.substack\\.com/.*',
+    // Out of scope.  These are commercial platforms, not personal websites.
+    'https://medium.com/',
+    'https://substack.com/',
 
-    // These do not load in the console due to frame-embedding restrictions.
-    '.*://cari\\.institute/.*',
-    '.*://wdl\\.mcdaniel\\.edu/.*',
+    // These pages fail to load in the console due to frame restrictions.
+    'https://cari.institute/',
+    'https://wdl.mcdaniel.edu/',
   ]
 }
