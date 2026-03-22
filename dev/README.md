@@ -4,11 +4,17 @@ Developer Notes
 Release Checklist
 -----------------
 
- 1. Update copyright in [LICENCE.md][].
- 2. Update [CHANGES.md][]
- 3. Update version number in this file (2 places).
- 4. Update version number in [index.html][] (2 places).
- 3. Run the following commands:
+ 1. Obtain a new screenshot if necessary:
+
+    ```
+    make ss
+    ```
+
+ 2. Update copyright in [LICENCE.md][].
+ 3. Update [CHANGES.md][]
+ 4. Update version number in this file (2 places).
+ 5. Update version number in [index.html][] (2 places).
+ 6. Run the following commands:
 
     ```
     make checks
@@ -23,7 +29,7 @@ Release Checklist
     git push gh "$VER"
     ```
 
- 4. Write release page on personal website:
+ 7. Write release page on personal website:
 
     ```sh
     cd ~/git/susam.net/
@@ -31,7 +37,7 @@ Release Checklist
     em content/tree/code/news/wander/$VER.post.html
     ```
 
- 5. Commit personal website:
+ 8. Commit personal website:
 
     ```
     VER=0.1.0
@@ -46,7 +52,7 @@ Release Checklist
     git push
     ```
 
- 6. Publish personal website:
+ 9. Publish personal website:
 
     ```
     git checkout cu
@@ -54,15 +60,15 @@ Release Checklist
     make cu
     ```
 
- 7. Make a new release on Codeberg.
+10. Make a new release on Codeberg.
 
- 8. Make a new release on GitHub.
+11. Make a new release on GitHub.
 
- 9. Share on Mastodon.
+12. Share on Mastodon.
 
-10. Share on newsletter.
+13. Share on newsletter.
 
-11. Share on IRC.
+14. Share on IRC.
 
 [LICENCE.md]: LICENCE.md
 [CHANGES.md]: CHANGES.md
