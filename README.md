@@ -281,7 +281,7 @@ some desirable effects and some counterintuitive ones:
     But counterintuitively, it does not ignore the URL
     `https://example.com/foobar` because the normalised pattern
     `://example.com/foo/` is not a prefix of the normalised URL
-    `://example.com/foobar`.
+    `://example.com/foobar/`.
 
  3. An ignore pattern `https://example.com/foo/` is equivalent to the
     previous one.  This one makes it more obvious why it doesn't match
@@ -301,7 +301,8 @@ some desirable effects and some counterintuitive ones:
  5. An ignore pattern `https://example.com/foo/#world` is equivalent
     to the previous one.
 
- 6. An ignore pattern `httpS://Example.COM/Foo` matches all of the following URLs:
+ 6. An ignore pattern `httpS://Example.COM/Foo` matches all of the
+    following URLs:
 
     ```
     https://example.com/foo
@@ -395,9 +396,9 @@ YouTube channels.  It does not accept arbitrary small websites.  In
 fact, it was this particular limitation that motivated me to build
 Wander.
 
-Unlike Kagi Small Web, there is no central list of URLs.  Each
-participant hosts their own Wander console along with their own list
-of favourite URLs.  You can begin browsing the network from any
+Unlike Kagi Small Web, there is no central list of URLs in Wander.
+Each participant hosts their own Wander console along with their own
+list of favourite URLs.  You can begin browsing the network from any
 console.  The pages you see are pulled from that console, the consoles
 it links to and so on recursively.
 
@@ -436,31 +437,61 @@ improvements:
 
  1. Please create a new pull request for your contribution.
 
- 2. After opening a pull request, please be patient.  I have a very
+ 2. Run `make deps` and `make checks` to catch code style issues
+    before sending your pull request.  If you do not have `make`,
+    refer to the [Makefile](Makefile) and run the commands for `deps`
+    and `checks` manually.
+
+ 3. Please read [Writing Good Commit Messages][otp-wiki] and follow
+    the recommendations there.  Here are some important things to
+    check before sending a pull request:
+
+    - Limit the first line of the commit message to 50 characters.
+
+    - If a second line is present, it must be blank.
+
+    - You may include a more detailed explanation starting from the
+      third line.  This is optional.
+
+    - If you include a detailed explanation, ensure that each line is
+      no longer than 72 characters.  Hard-wrap the text by inserting
+      line breaks.  In Vim, you can use `:set tw=72` and reflow text
+      with `gq`.  In Emacs, use `M-q` to reformat a paragraph.  For
+      other editors, refer to their documentation.  If your editor
+      does not support automatic hard-wrapping, you may need to wrap
+      lines manually.
+
+    - Use proper capitalisation, punctuation and complete sentences.
+
+    These guidelines may feel old-fashioned, but they are the
+    conventions I follow.  Code can be fixed in a later commit if
+    needed.  Commit messages cannot be edited after merging without
+    rewriting history, which I want to avoid.  Therefore, ensure the
+    commit message is in good shape when submitting a pull request.
+
+ 3. I know my code is not the most modern way to write JavaScript.
+    Still, I would appreciate it if any new code follows the existing
+    style as much as possible.
+
+ 4. After opening a pull request, please be patient.  I have a very
     busy schedule and cannot review changes quickly.  I am currently
     busy with a few academical pursuits, so I will have limited time
     to collaborate on pull requests until June 2026.  I will still try
     to review submissions whenever I can during breaks.  (This tool
     itself was written during one such break.)
 
- 3. The smaller the change, the easier it will be for me to review and
+ 5. The smaller the change, the easier it will be for me to review and
     merge the changes.
 
- 4. I may not merge every change, so please keep that in mind when
+ 6. I may not merge every change, so please keep that in mind when
     deciding how much time to invest in a contribution.  I do not want
     you to feel too disappointed if a change is not merged.  I
-    generally recommend making changes that are useful to you first
-    and foremost.  That way, even if your contribution is not merged,
-    it will still be valuable to you and something you can continue
-    using for yourself.
+    generally recommend making changes that are first and foremost
+    useful to *you*.  That way, even if your contribution is not
+    merged, it will still be valuable to you and something you can
+    continue using for yourself.
 
- 5. I know my code is not the most modern way to write JavaScript.
-    Still, I would appreciate it if any new code follows the existing
-    style as much as possible.
-
- 6. Run `make deps` and `make checks` to catch code style issues
-    before sending your pull request.  If you do not have `make`,
-    refer to the `Makefile` and run the listed commands manually.
+[otp-wiki]: https://github.com/erlang/otp/wiki/writing-good-commit-messages
 
 
 Support
