@@ -11,31 +11,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
       /* Colours */
-      body {
-        background: #696;
-      }
+      body { background: #696 }
       button, input, dialog, noscript {
         background: #bdb;
         border-color: #363;
         color: #030
       }
-      dialog {
-        background: #cec;
-      }
-      button:hover {
-        background: #9c9;
-      }
-      button:active {
-        background: #8c8;
-      }
-      dialog::backdrop {
-        background: #0009;
-      }
-      /* Dimensions and decorations */
+      button:hover { background: #9c9 }
+      button:active { background: #8c8 }
+      dialog { background: #cec }
+      dialog::backdrop { background: #0009 }
+      /* Body and header */
       body {
         line-height: 1.5;
         margin: 0;
-        padding: 1em;
       }
       body, button, input {
         font-family: courier, monospace;
@@ -43,77 +32,24 @@
         font-weight: bold;
       }
       button, input {
-        box-sizing: border-box;
-        margin-bottom: 1em;
         min-height: 2.5em;
-        width: 6em;
+        box-sizing: border-box;
       }
       button {
         cursor: pointer;
       }
       input {
         padding-left: 0.5em;
-        width: 18.5em;
       }
-      header input:not(:last-of-type),
-      header button:not(:last-of-type) {
-        margin-right: 0.25em;
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5em;
+        padding: 0.5em;
       }
-      dialog {
-        border: thick solid;
-        max-width: 42em;
-        max-height: 80vh;
-        overflow: auto;
-      }
-      dialog header, dialog footer {
-        text-align: center;
-      }
-      dialog header h1, dialog header form {
-        display: inline-block;
-        vertical-align: top;
-      }
-      dialog header h1 {
-        font-size: 1.5em;
-        margin: 0;
-        padding-left: 2rem;
-        text-align: center;
-        width: calc(100% - 4rem);
-      }
-      dialog header button {
-        box-sizing: border-box;
-        height: auto;
-        margin: 0;
-        min-height: 0;
-        padding: 0.25em;
-        vertical-align: top;
-        width: 2em;
-      }
-      dialog h2 {
-        font-size: 1.2em;
-        margin-bottom: 0;
-      }
-      dialog h2 + p {
-        margin-top: 0.5em;
-      }
-      dialog footer button {
-        margin-bottom: 0;
-      }
-      iframe {
-        background: #fff;
-        border: thick solid #363;
-        box-sizing: border-box;
-        height: calc(100vh - 12.5em);
-        width: 100%;
-      }
-      #sandbox-iframe {
-        display: none;
-      }
-      #url-wide-input, #reload-button, #go-button, #open-button {
-        display: none;
-      }
-      #url-narrow-input {
-        margin-right: 0;
-      }
+      header button { flex: 1 1 0% }
+      header input { flex: 0 0 100% }
+      #go-button, #open-button { display: none }
       noscript {
         border: medium double #600;
         color: #600;
@@ -123,19 +59,65 @@
         padding: 1em;
         text-align: center;
       }
-      @media (min-width: 70em) {
-        iframe {
-          height: calc(100vh - 5.5em);
-        }
-        #url-narrow-input {
-          display: none;
-        }
-        #reload-button, #go-button, #open-button, #url-wide-input {
-          display: inline-block;
-        }
-        #url-wide-input {
-          width: 25em;
-        }
+      /* Dialog */
+      dialog {
+        border: thick solid;
+        max-width: 42em;
+        max-height: 80vh;
+        overflow: auto;
+      }
+      dialog header { padding: 0 }
+      dialog header::before { content: "" }
+      dialog header::before, dialog header form { flex: 1 1 0% }
+      dialog header form button {
+        box-sizing: border-box;
+        height: 2em;
+        min-height: 0;
+        padding: 0;
+        width: 2em;
+      }
+      dialog header h1 {
+        flex: 0 1 auto;
+        margin: 0;
+        text-align: center;
+      }
+      dialog header div {
+        flex: 0 0 100%;
+        text-align: center;
+      }
+      dialog header form {
+        text-align: right;
+      }
+      dialog h2 {
+        font-size: 1.2em;
+        margin: 1.5em 0 0 0;
+      }
+      dialog h2 + p {
+        margin-top: 0.25em;
+      }
+      dialog footer button {
+        width: 6em;
+        display: block;
+        margin: 0 auto;
+      }
+      /* Frames */
+      #wander-iframe {
+        background: #fff;
+        border: thick solid #363;
+        box-sizing: border-box;
+        height: calc(100vh - 6.5em);
+        width: 100%;
+      }
+      #sandbox-iframe {
+        display: none;
+      }
+      /* Wide screen */
+      @media (min-width: 40em) {
+        body { padding: 1em }
+        header { padding: 0 0 1em 0 }
+        header input { order: 1; flex: 3 1 0% }
+        #go-button, #open-button, #about-button { order: 2; display: block }
+        iframe { height: calc(100vh - 5.5em) }
       }
     </style>
     <script src="wander.js"></script>
@@ -195,9 +177,7 @@
         document.getElementById('console-button').addEventListener('click', showConsoleDialog)
         document.getElementById('open-button').addEventListener('click', openURL)
         document.getElementById('go-button').addEventListener('click', gotoURL)
-        document.getElementById('reload-button').addEventListener('click', reloadPage)
-        document.getElementById('url-narrow-input').addEventListener('keydown', handleURLInput)
-        document.getElementById('url-wide-input').addEventListener('keydown', handleURLInput)
+        document.getElementById('url-input').addEventListener('keydown', handleURLInput)
         document.getElementById('wander-button').addEventListener('click', pickPage)
         document.getElementById('wander-iframe').addEventListener('load', pageLoadDone)
         document.getElementById('wander-iframe').addEventListener('error', pageLoadError)
@@ -293,8 +273,7 @@
         const page = pick(pages)
         log('----- BEGIN WANDERING -----')
         mode = WANDERING_MODE
-        document.getElementById('url-narrow-input').value = page.url
-        document.getElementById('url-wide-input').value = page.url
+        document.getElementById('url-input').value = page.url
         log(`Loading page: ${page.referrer} => ${page.url}`)
         iframe.src = page.url
         history.push(page)
@@ -390,12 +369,6 @@
         collectPages(e.data.url, e.data.wander.pages || [])
       }
 
-      function reloadPage () {
-        const iframe = document.getElementById('wander-iframe')
-        const src = iframe.src
-        iframe.src = src
-      }
-
       function handleURLInput (e) {
         if (e.key === 'Enter') {
           gotoURL()
@@ -403,15 +376,15 @@
       }
 
       function gotoURL () {
-        const value = normaliseGotoURL(visibleInput().value)
-        log('Navigating to URL:', value)
-        document.getElementById('url-narrow-input').value = value
-        document.getElementById('url-wide-input').value = value
-        document.getElementById('wander-iframe').src = value
+        const url = document.getElementById('url-input').value
+        const normURL = normaliseGotoURL(url)
+        log('Navigating to URL:', normURL)
+        document.getElementById('url-input').value = normURL
+        document.getElementById('wander-iframe').src = normURL
       }
 
       function openURL () {
-        window.open(visibleInput().value)
+        window.open(document.getElementById('url-input').value)
       }
 
       function showAboutDialog () {
@@ -497,13 +470,6 @@
         return normURL.slice(0, normURL.lastIndexOf('/') + 1) + 'wander.js'
       }
 
-      // TODO: Eliminate double input fields.
-      function visibleInput () {
-        const urlNarrowInput = document.getElementById('url-narrow-input')
-        const urlWideInput = document.getElementById('url-wide-input')
-        return urlNarrowInput.offsetParent ? urlNarrowInput : urlWideInput
-      }
-
       function test () {
         const assert = console.assert.bind(console)
 
@@ -535,14 +501,12 @@
   <body>
     <noscript>JavaScript is required to use this application.</noscript>
     <header>
-      <button id="wander-button">Wander</button><!--
-      --><button id="console-button">Console</button><!--
-      --><button id="reload-button">Reload</button><!--
-      --><input id="url-wide-input" autocomplete="off"><!--
-      --><button id="go-button">Go</button><!--
-      --><button id="open-button">Open</button><!--
-      --><button id="about-button">About</button><!--
-      --><input id="url-narrow-input">
+      <button id="wander-button">Wander</button>
+      <button id="console-button">Console</button>
+      <button id="go-button">Go</button>
+      <button id="open-button">Open</button>
+      <button id="about-button">About</button>
+      <input id="url-input" autocomplete="off">
     </header>
     <iframe id="wander-iframe"></iframe>
     <iframe id="sandbox-iframe" sandbox="allow-scripts"></iframe>
