@@ -1,5 +1,5 @@
 <!--
-  Wander 0.2.0.dev9
+  Wander 0.2.0.dev10
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -554,10 +554,10 @@
           return true
         }
         if (typeof url === 'string' && URL.canParse(url)) {
-          const mine = window.location.protocol
-          const theirs = new URL(url).protocol
-          return (['file:', 'http:', 'https:'].includes(theirs) &&
-                  ['file:', theirs].includes(mine))
+          const levels = ['file:', 'http:', 'https:']
+          const myLevel = levels.indexOf(window.location.protocol)
+          const theirLevel = levels.indexOf(new URL(url).protocol)
+          return myLevel >= 0 && theirLevel >= myLevel
         }
         return false
       }

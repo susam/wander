@@ -18,6 +18,9 @@ deps:
 serve:
 	python3 -m http.server
 
+localhost:
+	open http://localhost:8000/
+
 message-injection-console:
 	cp index.html dev/examples/message-injection-console/w.html
 	open http://localhost:8000/dev/examples/message-injection-console/w.html || :
