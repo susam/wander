@@ -211,7 +211,7 @@
       function collectConsoles (consoleURL, urls) {
         const prevConsolesFound = consolesFound
         for (const url of urls) {
-          const normURL = normaliseWanderURL(url)
+          const normURL = normalisedWanderURL(url)
           if (!isGoodURL(normURL)) {
             log(`Skipped incompatible console URL: ${consoleURL} => ${normURL}`)
             continue
@@ -452,26 +452,43 @@
         return new URL(result).href
       }
 
-      function normaliseWanderURL (url) {
-        if (url.endsWith('index.html')) {
-          url = url.slice(0, -'index.html'.length)
+      function normalisedWanderURL (wanderURL) {
+        if (wanderURL.endsWith('index.html')) {
+          wanderURL = wanderURL.slice(0, -'index.html'.length)
         }
-        if (!url.endsWith('/')) {
-          url += '/'
+        if (wanderURL.endsWith('/')) {
+          return wanderURL
         }
-        return url
+        const lastSlash = wanderURL.lastIndexOf('/')
+        const lastSegment = wanderURL.slice(lastSlash + 1)
+        if (lastSegment.includes('.')) { // Treat it like a filename.
+          return wanderURL
+        }
+        return wanderURL + '/'
       }
 
       function wanderJSURL (wanderURL) {
         // This function needs to work with relative paths, e.g.,
         // 'foo/wander.html' as well for local testing.  That's why we
         // don't use URL API since it needs complete URLs.
-        const normURL = normaliseWanderURL(wanderURL)
-        return normURL.slice(0, normURL.lastIndexOf('/') + 1) + 'wander.js'
+        if (wanderURL.endsWith('/')) {
+          return wanderURL + 'wander.js'
+        }
+        const lastSlash = wanderURL.lastIndexOf('/')
+        const lastSegment = wanderURL.slice(lastSlash + 1)
+        if (lastSegment.includes('.')) { // Treat it like a filename.
+          return wanderURL.slice(0, lastSlash + 1) + 'wander.js'
+        }
+        return wanderURL + '/wander.js'
       }
 
       function test () {
-        const assert = console.assert.bind(console)
+        function assert (condition) {
+          if (!condition) {
+            throw new Error('Assertion failed')
+          }
+          console.log('PASS')
+        }
 
         assert(isURLMatchingIgnore('', ''))
         assert(isURLMatchingIgnore('f', 'f'))
@@ -491,9 +508,39 @@
         assert(isIgnoredURL(['http://foo/bar/'], 'http://foo/bar'))
         assert(isIgnoredURL(['http://foo/bar/'], 'https://foo/bar'))
         assert(!isIgnoredURL(['http://foo/bar/'], 'https://foo/barx'))
-      }
 
-      test()
+        assert(normalisedWanderURL('') === '/')
+        assert(normalisedWanderURL('/') === '/')
+        assert(normalisedWanderURL('/index.html') === '/')
+        assert(normalisedWanderURL('//') === '//')
+        assert(normalisedWanderURL('//index.html') === '//')
+        assert(normalisedWanderURL('/bar.html') === '/bar.html')
+        assert(normalisedWanderURL('foo') === 'foo/')
+        assert(normalisedWanderURL('foo/') === 'foo/')
+        assert(normalisedWanderURL('foo/index.html') === 'foo/')
+        assert(normalisedWanderURL('foo//') === 'foo//')
+        assert(normalisedWanderURL('foo//index.html') === 'foo//')
+        assert(normalisedWanderURL('foo/bar.html') === 'foo/bar.html')
+        assert(normalisedWanderURL('http://foo') === 'http://foo/')
+        assert(normalisedWanderURL('http://foo/') === 'http://foo/')
+        assert(normalisedWanderURL('http://foo/index.html') === 'http://foo/')
+        assert(normalisedWanderURL('http://foo//') === 'http://foo//')
+        assert(normalisedWanderURL('http://foo//index.html') === 'http://foo//')
+        assert(normalisedWanderURL('http://foo/bar.html') === 'http://foo/bar.html')
+
+        assert(wanderJSURL('') === '/wander.js')
+        assert(wanderJSURL('/') === '/wander.js')
+        assert(wanderJSURL('//') === '//wander.js')
+        assert(wanderJSURL('/bar.html') === '/wander.js')
+        assert(wanderJSURL('foo') === 'foo/wander.js')
+        assert(wanderJSURL('foo/') === 'foo/wander.js')
+        assert(wanderJSURL('foo//') === 'foo//wander.js')
+        assert(wanderJSURL('foo/bar.html') === 'foo/wander.js')
+        assert(wanderJSURL('http://foo') === 'http://foo/wander.js')
+        assert(wanderJSURL('http://foo/') === 'http://foo/wander.js')
+        assert(wanderJSURL('http://foo//') === 'http://foo//wander.js')
+        assert(wanderJSURL('http://foo/bar.html') === 'http://foo/wander.js')
+      }
 
       window.addEventListener('load', init)
     </script>

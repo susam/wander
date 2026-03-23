@@ -23,6 +23,7 @@ Contents
 
 * [How It Works](#how-it-works)
 * [Wandering the Web](#wandering-the-web)
+* [Changing Base Console](#changing-base-console)
 * [Install](#install)
 * [Customise Your Console](#customise-your-console)
   * [Custom CSS](#custom-css)
@@ -30,6 +31,7 @@ Contents
   * [Customisation Order](#customisation-order)
 * [Caution](#caution)
 * [Design](#design)
+* [Features](#features)
 * [Comparisons](#comparisons)
   * [Wander vs Kagi Small Web](#wander-vs-kagi-small-web)
   * [Wander vs StumbleUpon](#wander-vs-stumbleupon)
@@ -73,41 +75,64 @@ preferably, at the directory `/wander/`.
 Wandering the Web
 -----------------
 
-A visitor begins wandering at a Wander console.  This might be your
-own console or someone else's.  For example, you could start wandering
-at https://susam.net/wander/ right now.
+As a visitor, you begin wandering the Wander network at a Wander
+console.  This might be your own console or someone else's.  For
+example, you can start wandering at https://susam.net/wander/ right
+now.  The console you visit is called the *base console*.  All other
+consoles are known as *remote consoles*.
 
-Once on a Wander console, the visitor can click the Wander button
-at the top left to visit websites and pages recommended by the
-community.
+Once you are on a Wander console, you can click the **Wander** button
+at the top left to visit websites and pages recommended by your base
+console as well as remote consoles.  Your base console fetches website
+recommendations from itself as well as from remote consoles and
+displays them to you.
 
-The first time you load someone's Wander console, one of the web pages
-recommended by the console owner is picked randomly and presented to
-you.  The console you are on then discovers all the other consoles
-that the console owner has linked to in their `wander.js` file.  These
-other consoles are known as the neighbours of the first console (the
-one you visited).
+The first time you load a base console, one of the web pages
+recommended by the base console owner is picked randomly and presented
+to you.  The base console then discovers all the other consoles listed
+in its `wander.js` file ([see example][wander.js]).  These other
+consoles are known as the neighbours of the base console.  Each
+console lists its neighbouring consoles in its `wander.js` file.
 
-When you click the **Wander** button for the first time, one of these
-neighbouring consoles is chosen at random.  A page recommended by that
-console is then shown to you.  At the same time, the neighbours of
-that console are discovered as well.  Note that throughout this
-process, you remain on the original console you visited.
+When you click the **Wander** button for the first time, your base
+console selects one of its neighbouring consoles at random and then
+chooses a page from its recommendations.  That chosen page is then
+shown to you on your base console.  At the same time, the neighbours
+of that console are discovered.  Throughout this process, you remain
+on the base console.  You never leave it.
 
-With each click of the button, a console is chosen at random from the
-growing list of discovered consoles.  Specifically, it selects a
-random console from the most recently discovered 1000 consoles.  A
-recommendation from that console is shown to you and its neighbours
-are added to the list.  In this way, each hop takes you deeper into
-the Wander network, while expanding the set of known consoles.
+With each click of the **Wander** button, the base console selects a
+console at random from the growing list of discovered consoles.
+Specifically, it selects a console from the most recently discovered
+1000 consoles.  A recommendation from that console is shown to you and
+its neighbours are added to the list.  In this way, each hop takes you
+deeper and deeper into the Wander network, while expanding the set of
+known remote consoles.
 
-As mentioned earlier, you never leave the original console while this
-happens.  However, if you wish, you can click the **Console** button
-at the top to move to a neighbour's console.  In practice, this is
-rarely necessary since most consoles look similar, but you can do so
-if you want to explore a different console.  Occasionally, some
-console owners style their consoles differently, so you may encounter
-a few quirky consoles when switching consoles.
+[wander.js]: https://susam.net/wander/wander.js
+
+
+Changing Base Console
+---------------------
+
+As mentioned in the previous section, you typically do not leave the
+base console while wandering the web.  However, if you wish, you can
+click the **Console** button at the top to visit a neighbouring
+console.  In practice, this is rarely necessary since most consoles
+look similar, but you can do so if you want to explore a different
+one.
+
+Some console owners customise the appearance or behaviour of their
+consoles.  You might want to change the base console to encounter such
+customised consoles.  Further, different console owners maintain
+different ignore lists that define which websites must never appear on
+their console.  An ignore list ([see example][wander.js]) typically
+contains commercial websites that do not fit the spirit of small web,
+as well as defunct or incompatible websites that do not load in the
+console.  A console with a well maintained *ignore* list ensures that
+a visitor to that console has lower likelihood of encountering
+commercial or broken websites.  So another reason for changing your
+base console is to use one with a better ignore list.
 
 
 Install
@@ -259,7 +284,7 @@ A URL is considered to match a pattern if the normalised pattern is a
 prefix of the normalised URL.  This peculiar matching algorithm has
 some desirable effects and some counterintuitive ones:
 
- 1. An ignore pattern `https://example.com/` ignores all of the
+ - An ignore pattern `https://example.com/` ignores all of the
     following URLs:
 
     ```
@@ -269,7 +294,7 @@ some desirable effects and some counterintuitive ones:
     ftp://example.com/
     ```
 
- 2. An ignore pattern `https://example.com/foo` ignores all of the
+ - An ignore pattern `https://example.com/foo` ignores all of the
     following URLs:
 
     ```
@@ -283,11 +308,11 @@ some desirable effects and some counterintuitive ones:
     `://example.com/foo/` is not a prefix of the normalised URL
     `://example.com/foobar/`.
 
- 3. An ignore pattern `https://example.com/foo/` is equivalent to the
+  - An ignore pattern `https://example.com/foo/` is equivalent to the
     previous one.  This one makes it more obvious why it doesn't match
     `https://example.com/foobar`.
 
- 4. An ignore pattern `https://example.com/foo?p=hello` matches all of
+  - An ignore pattern `https://example.com/foo?p=hello` matches all of
     the following URLs:
 
     ```
@@ -298,10 +323,10 @@ some desirable effects and some counterintuitive ones:
     https://example.com/foo/bar/
     ```
 
- 5. An ignore pattern `https://example.com/foo/#world` is equivalent
+  - An ignore pattern `https://example.com/foo/#world` is equivalent
     to the previous one.
 
- 6. An ignore pattern `httpS://Example.COM/Foo` matches all of the
+  - An ignore pattern `httpS://Example.COM/Foo` matches all of the
     following URLs:
 
     ```
@@ -311,9 +336,9 @@ some desirable effects and some counterintuitive ones:
     ```
 
 The last example demonstrates that prefix matching is
-case-insensitive.  This can be counterintuitive because that a URL
-like `https://example.com/foo` would match `https://example.com/FOO`
-as well, even though it is quite possible that they are two distinct
+case-insensitive.  This can be counterintuitive because a URL like
+`https://example.com/foo` would match `https://example.com/FOO` as
+well, even though it is quite possible that they are two distinct
 pages serving different content.
 
 An alternative approach would be to perform case-insensitive matching
