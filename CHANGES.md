@@ -38,6 +38,8 @@ Changelog
   session storage set by your website.  This also prevents a remote
   `wander.js` from altering your console's user interface, state or
   behaviour.
+- Add sandbox settings to the `<iframe>` that loads recommended web
+  pages (contributed by [exurd](https://codeberg.org/exurd)).
 
 
 0.1.0 (2025-03-19)

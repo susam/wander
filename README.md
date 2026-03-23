@@ -37,6 +37,7 @@ Contents
   * [Wander vs StumbleUpon](#wander-vs-stumbleupon)
   * [Wander vs Webrings](#wander-vs-webrings)
 * [Contributing](#contributing)
+* [Credits](#credits)
 * [Support](#support)
 * [Licence](#licence)
 
@@ -517,6 +518,15 @@ improvements:
     continue using for yourself.
 
 [otp-wiki]: https://github.com/erlang/otp/wiki/writing-good-commit-messages
+
+
+Credits
+-------
+
+Thanks to:
+
+- [exurd](https://codeberg.org/exurd) for adding sandbox settings to
+  the wander iframe.
 
 
 Support
