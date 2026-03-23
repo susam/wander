@@ -12,6 +12,8 @@ Changelog
 - Show version number in the **About** dialog.
 - Add an **Open** button to open a website recommendation in a new tab.
 - Display current host console in the **Console** dialog.
+- Add console screens in the **Console* dialog: Base, Neighbours,
+  Pages, Ignores, History, Discovery.
 
 ### Changed
 
@@ -25,6 +27,7 @@ Changelog
 - Title bar and the about dialog now contain the name 'Wander Console'
   rather than just 'Wander'.
 - Use kebab-case names for all HTML element IDs and class names.
+- Links in dialog boxes open in new tabs.
 
 ### Removed
 
