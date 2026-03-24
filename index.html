@@ -12,11 +12,8 @@
     <style>
       /* Colours */
       body { background: #696 }
-      button, input, dialog, noscript {
-        background: #bdb;
-        border-color: #363;
-        color: #030;
-      }
+      body, button, input { color: #030 }
+      button, input, dialog { background: #bdb; border-color: #363 }
       button:hover { background: #9c9 }
       button:active { background: #8c8 }
       button:disabled, button:disabled:hover, button:disabled:active { background: #cec }
@@ -115,6 +112,13 @@
       dialog nav button {
         flex: 0 0 8em;
       }
+      svg {
+        color: inherit;
+        height: 0.8em;
+        width: 0.8em;
+        margin-left: 0.25em;
+        vertical-align: middle;
+      }
       /* Frames */
       #wander-iframe {
         background: #fff;
@@ -156,6 +160,9 @@
 
       const log = LOGGING ? console.log.bind(console, '[Wander]') : function () {}
 
+      // Main Console
+      // ------------
+
       function init () {
         log(`Wander ${VERSION}`)
         initCustomStyle()
@@ -164,8 +171,8 @@
         initConsoleDialog()
         initVersion()
         initIgnores(wander.ignore || [])
-        collectConsoles(window.location.href, wander.consoles || [])
-        collectPages(window.location.href, wander.pages || [])
+        collectConsoles(normaliseWanderURL(window.location.href), wander.consoles || [])
+        collectPages(normaliseWanderURL(window.location.href), wander.pages || [])
         pickPage()
         log('Initialised')
       }
@@ -290,6 +297,9 @@
         }
       }
 
+      // Wandering
+      // ---------
+
       function pickPage () {
         if (pages.length === 0) {
           log('WARNING: No valid pages available')
@@ -324,158 +334,6 @@
         log('ERROR:', e)
         if (mode === WANDERING_MODE) {
           log('----- FAILED WANDERING -----')
-        }
-      }
-
-      function showConsoleDialog () {
-        setupConsoleDialogBase()
-        setupConsoleDialogNeighbours()
-        setupConsoleDialogPages()
-        setupConsoleDialogIgnores()
-        setupConsoleDialogHistory()
-        setupConsoleDialogDiscovery()
-        document.getElementById('console-dialog').showModal()
-      }
-
-      function setupConsoleDialogBase () {
-        const normBaseURL = normaliseWanderURL(window.location.href)
-        document.getElementById('base-console-link').textContent = normBaseURL
-        document.getElementById('base-console-link').href = normBaseURL
-        document.getElementById('base-console-js-link').href = wanderJSURL(normBaseURL)
-        if (history.length === 0) {
-          document.getElementById('last-page-link').textContent = 'Unavailable'
-          document.getElementById('last-referrer-link').textContent = 'Unavailable'
-          document.getElementById('last-referrer-js-link').textContent = 'Unavailable'
-          return
-        }
-        const last = history[history.length - 1]
-        const normReferrerURL = normaliseWanderURL(last.referrer)
-        const normReferrerJSURL = wanderJSURL(last.referrer)
-        document.getElementById('last-page-link').textContent = last.url
-        document.getElementById('last-page-link').href = last.url
-        document.getElementById('last-referrer-link').textContent = normReferrerURL
-        document.getElementById('last-referrer-link').href = normReferrerURL
-        document.getElementById('last-referrer-js-link').href = normReferrerJSURL
-      }
-
-      function setupConsoleDialogNeighbours () {
-        const ul = document.getElementById('neighbours-list')
-        ul.textContent = ''
-        if (wander.consoles.length === 0) {
-          const li = document.createElement('li')
-          ul.append(li)
-          li.append('None')
-          return
-        }
-        for (const url of wander.consoles) {
-          const li = document.createElement('li')
-          const normURL = normaliseWanderURL(url)
-          const aConsole = document.createElement('a')
-          const aJS = document.createElement('a')
-          ul.append(li)
-          li.append(aConsole, ' (', aJS, ')')
-          aConsole.href = normURL
-          aConsole.textContent = normURL
-          aJS.href = wanderJSURL(normURL)
-          aJS.textContent = 'js'
-          aConsole.target = aJS.target = '_blank'
-        }
-      }
-
-      function setupConsoleDialogPages () {
-        const ul = document.getElementById('pages-list')
-        ul.textContent = ''
-        if (wander.pages.length === 0) {
-          const li = document.createElement('li')
-          ul.append(li)
-          li.append('None')
-          return
-        }
-        for (const url of wander.pages) {
-          const li = document.createElement('li')
-          const a = document.createElement('a')
-          ul.append(li)
-          li.append(a)
-          a.href = a.textContent = url
-          a.target = '_blank'
-        }
-      }
-
-      function setupConsoleDialogIgnores () {
-        const ul = document.getElementById('ignores-list')
-        ul.textContent = ''
-        if (wander.ignore.length === 0) {
-          const li = document.createElement('li')
-          ul.append(li)
-          li.append('None')
-          return
-        }
-        for (const url of wander.ignore) {
-          const li = document.createElement('li')
-          const a = document.createElement('a')
-          ul.append(li)
-          li.append(a)
-          a.href = a.textContent = url
-          a.target = '_blank'
-        }
-      }
-
-      function setupConsoleDialogHistory () {
-        const ul = document.getElementById('history-list')
-        ul.textContent = ''
-        if (history.length === 0) {
-          const li = document.createElement('li')
-          ul.append(li)
-          li.append('None')
-          return
-        }
-        for (const item of history.slice().reverse()) {
-          const li = document.createElement('li')
-          const p = document.createElement('p')
-          const aReferrer = document.createElement('a')
-          const aReferrerJS = document.createElement('a')
-          const aPage = document.createElement('a')
-          const br = document.createElement('br')
-          ul.append(li)
-          li.append(p)
-          p.append(aReferrer, ' (', aReferrerJS, ')', br, '\u21b3 ', aPage)
-          aReferrer.href = aReferrer.textContent = normaliseWanderURL(item.referrer)
-          aReferrerJS.href = wanderJSURL(item.referrer)
-          aReferrerJS.textContent = 'js'
-          aPage.href = aPage.textContent = item.url
-          aReferrer.target = aReferrerJS.target = aPage.target = '_blank'
-        }
-      }
-
-      function setupConsoleDialogDiscovery () {
-        const ul = document.getElementById('discovery-list')
-        ul.textContent = ''
-        if (consoles.length === 0) {
-          const li = document.createElement('li')
-          ul.append(li)
-          li.append('None')
-          return
-        }
-        for (const item of consoles.slice().reverse()) {
-          const li = document.createElement('li')
-          const p = document.createElement('p')
-          const aReferrer = document.createElement('a')
-          const aReferrerJS = document.createElement('a')
-          const aConsole = document.createElement('a')
-          const aConsoleJS = document.createElement('a')
-          const br = document.createElement('br')
-          ul.append(li)
-          li.append(p)
-          p.append(
-            aReferrer, ' (', aReferrerJS, ')', br, '\u21b3 ',
-            aConsole, ' (', aConsoleJS, ')'
-          )
-          aReferrer.href = aReferrer.textContent = normaliseWanderURL(item.referrer)
-          aConsole.href = aConsole.textContent = normaliseWanderURL(item.url)
-          aReferrerJS.href = wanderJSURL(item.referrer)
-          aConsoleJS.href = wanderJSURL(item.url)
-          aReferrerJS.textContent = aConsoleJS.textContent = 'js'
-          aReferrer.target = aReferrerJS.target = aConsole.target = aConsoleJS.target = '_blank'
         }
       }
 
@@ -523,6 +381,125 @@
         collectPages(e.data.url, e.data.wander.pages || [])
       }
 
+      // Console Dialog
+      // --------------
+
+      function showConsoleDialog () {
+        setupConsoleDialogBase()
+        setupConsoleDialogNeighbours()
+        setupConsoleDialogPages()
+        setupConsoleDialogIgnores()
+        setupConsoleDialogHistory()
+        setupConsoleDialogDiscovery()
+        document.getElementById('console-dialog').showModal()
+      }
+
+      function setupConsoleDialogBase () {
+        const normBaseURL = normaliseWanderURL(window.location.href)
+        const baseConsoleLink = document.getElementById('base-console-link')
+        const aConsoleLink = document.createElement('a')
+        const aJSLink = createExtLink(wanderJSURL(normBaseURL), 'JS')
+        baseConsoleLink.textContent = ''
+        baseConsoleLink.append(aConsoleLink, ' (', aJSLink, ')')
+        aConsoleLink.href = aConsoleLink.textContent = normBaseURL
+        const lastPageLink = document.getElementById('last-page-link')
+        const lastReferrerLink = document.getElementById('last-referrer-link')
+        if (history.length === 0) {
+          lastPageLink.textContent = lastReferrerLink.textContent = 'N/A'
+          return
+        }
+        const lastPage = history[history.length - 1]
+        lastPageLink.textContent = ''
+        lastPageLink.append(createExtLink(lastPage.url))
+        lastReferrerLink.textContent = ''
+        lastReferrerLink.append(createConsoleLink(lastPage.referrer))
+      }
+
+      function setupConsoleDialogNeighbours () {
+        const ul = document.getElementById('neighbours-list')
+        ul.textContent = ''
+        if (wander.consoles.length === 0) {
+          createNoneItem(ul)
+          return
+        }
+        for (const url of wander.consoles) {
+          const li = document.createElement('li')
+          ul.append(li)
+          li.append(createConsoleLink(url))
+        }
+      }
+
+      function setupConsoleDialogPages () {
+        const ul = document.getElementById('pages-list')
+        ul.textContent = ''
+        if (wander.pages.length === 0) {
+          createNoneItem(ul)
+          return
+        }
+        for (const url of wander.pages) {
+          const li = document.createElement('li')
+          ul.append(li)
+          li.append(createExtLink(url))
+        }
+      }
+
+      function setupConsoleDialogIgnores () {
+        const ul = document.getElementById('ignores-list')
+        ul.textContent = ''
+        if (wander.ignore.length === 0) {
+          createNoneItem(ul)
+          return
+        }
+        for (const url of wander.ignore) {
+          const li = document.createElement('li')
+          ul.append(li)
+          li.append(createExtLink(url))
+        }
+      }
+
+      function setupConsoleDialogHistory () {
+        const ul = document.getElementById('history-list')
+        ul.textContent = ''
+        if (history.length === 0) {
+          createNoneItem(ul)
+          return
+        }
+        for (const item of history.slice().reverse()) {
+          const li = document.createElement('li')
+          const p = document.createElement('p')
+          const br = document.createElement('br')
+          ul.append(li)
+          li.append(p)
+          p.append(
+            createConsoleLink(item.referrer), br, '\u21b3 ',
+            createExtLink(item.url)
+          )
+        }
+      }
+
+      function setupConsoleDialogDiscovery () {
+        const ul = document.getElementById('discovery-list')
+        ul.textContent = ''
+        if (consoles.length === 0) {
+          createNoneItem(ul)
+          return
+        }
+        for (const item of consoles.slice().reverse()) {
+          const li = document.createElement('li')
+          const p = document.createElement('p')
+          const br = document.createElement('br')
+          ul.append(li)
+          li.append(p)
+          p.append(
+            createConsoleLink(item.referrer), br, '\u21b3',
+            createConsoleLink(item.url)
+          )
+        }
+      }
+
+      // Button Handlers
+      // ---------------
+
       function handleURLInput (e) {
         if (e.key === 'Enter') {
           gotoURL()
@@ -544,6 +521,9 @@
       function showAboutDialog () {
         document.getElementById('about-dialog').showModal()
       }
+
+      // Utilities
+      // ---------
 
       function pick (items) {
         return items[Math.floor(Math.random() * items.length)]
@@ -636,6 +616,40 @@
         return wanderURL + '/wander.js'
       }
 
+      function createConsoleLink (consoleURL) {
+        const span = document.createElement('span')
+        const aConsoleLink = createExtLink(consoleURL, consoleURL)
+        const aJSLink = createExtLink(wanderJSURL(consoleURL), 'JS')
+        span.append(aConsoleLink, ' (', aJSLink, ')')
+        return span
+      }
+
+      function createExtLink (href, text) {
+        const a = document.createElement('a')
+        a.href = href
+        a.target = '_blank'
+        a.append(text || href, createExtIcon())
+        return a
+      }
+
+      function createExtIcon () {
+        const ns = 'http://www.w3.org/2000/svg'
+        const svg = document.createElementNS(ns, 'svg')
+        const use = document.createElementNS(ns, 'use')
+        svg.append(use)
+        use.setAttribute('href', '#ext-icon')
+        return svg
+      }
+
+      function createNoneItem (ul) {
+        const li = document.createElement('li')
+        ul.append(li)
+        li.append('None')
+      }
+
+      // Tests
+      // -----
+
       function test () {
         function assert (condition) {
           if (!condition) {
@@ -715,6 +729,16 @@
     </header>
     <iframe id="wander-iframe" sandbox="allow-downloads allow-forms allow-modals allow-pointer-lock allow-scripts"></iframe>
     <iframe id="discovery-iframe" sandbox="allow-scripts"></iframe>
+    <svg style="display: none">
+      <symbol id="ext-icon" viewBox="0 0 16 16">
+        <path fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linejoin="round" stroke-linecap="round" d="
+                M 7 1 L 1 1 L 1 15 L 15 15 L 15 9
+                M 11 1 L 15 1 L 15 5
+                M 8 8 L 15 1
+              "/>
+      </symbol>
+    </svg>
     <dialog id="console-dialog">
       <header>
         <h1>Console</h1><form method="dialog"><button>x</button></form>
@@ -732,10 +756,7 @@
         <p>
           Your base console is:
         </p>
-        <p class="center">
-          <a id="base-console-link"></a>
-          (<a id="base-console-js-link" target="_blank">js</a>)
-        </p>
+        <p id="base-console-link" class="center"></p>
         <p>
           This is the console you have loaded on your browser.  The
           base console fetches website recommendations from itself as
@@ -745,17 +766,12 @@
         <p>
           The last web page recommendation to you was:
         </p>
-        <p class="center">
-          <a id="last-page-link" target="_blank"></a>
-        </p>
+        <p id="last-page-link" class="center"></p>
         <p>
           This recommendation was fetched from the following remote
           console:
         </p>
-        <p class="center">
-          <a id="last-referrer-link" target="_blank"></a>
-          (<a id="last-referrer-js-link" target="_blank">js</a>)
-        </p>
+        <p id="last-referrer-link" class="center"></p>
       </section>
       <section id="neighbours-section">
         <h2>Console Neighbours</h2>

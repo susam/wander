@@ -212,7 +212,7 @@ by adding custom JavaScript files.  Further, you can customise which
 URLs your console should never load.
 
 
-### Customise CSS
+### Custom CSS
 
 To add a custom stylesheet, say, `style.css` to your console, edit
 your `wander.js` file and add a `styles` property:
@@ -231,7 +231,7 @@ The value of the `styles` property is a list of CSS filenames.  These
 filenames may be paths relative to your `index.html` or absolute URLs.
 
 
-### Customise JS
+### Custom JS
 
 Similarly, to add a custom script, say, `script.js`, add a `scripts`
 property:
