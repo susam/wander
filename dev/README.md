@@ -39,38 +39,17 @@ Release Checklist
     em content/tree/code/news/wander/$VER.post.html
     ```
 
- 9. Commit personal website:
+ 9. Commit and push personal website.
 
-    ```
-    VER=0.2.0
-    cd ~/git/susam.net/
-    git checkout main
-    cp ~/git/wander/index.html content/tree/wander/
-    git status
-    git add -p
-    git add content/tree/wander/
-    git commit -m "Add Wander version $VER"
-    git log -n 1 --stat
-    git push
-    ```
+10. Make a new release on Codeberg.
 
-10. Publish personal website:
+11. Make a new release on GitHub.
 
-    ```
-    git checkout cu
-    git rebase main
-    make cu
-    ```
+12. Share on Mastodon.
 
-11. Make a new release on Codeberg.
+13. Share on newsletter.
 
-12. Make a new release on GitHub.
-
-13. Share on Mastodon.
-
-14. Share on newsletter.
-
-15. Share on IRC.
+14. Share on IRC.
 
 [LICENCE.md]: ../LICENCE.md
 [CHANGES.md]: ../CHANGES.md
