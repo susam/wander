@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.2.0 (UNRELEASED)
+0.2.0 (2026-03-24)
 ------------------
 
 ### Added
@@ -44,7 +44,7 @@ Changelog
   pages (contributed by [exurd](https://codeberg.org/exurd)).
 
 
-0.1.0 (2025-03-19)
+0.1.0 (2026-03-19)
 ------------------
 
 ### Added

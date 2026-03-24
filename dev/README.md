@@ -23,7 +23,7 @@ Release Checklist
     git status
     git add -p
 
-    VER=0.1.0
+    VER=0.2.0
     git commit -m "Set version to $VER"
     git tag "$VER" -m "Wander $VER"
     make push
@@ -42,7 +42,7 @@ Release Checklist
  9. Commit personal website:
 
     ```
-    VER=0.1.0
+    VER=0.2.0
     cd ~/git/susam.net/
     git checkout main
     cp ~/git/wander/index.html content/tree/wander/
@@ -72,6 +72,6 @@ Release Checklist
 
 15. Share on IRC.
 
-[LICENCE.md]: LICENCE.md
-[CHANGES.md]: CHANGES.md
-[index.html]: index.html
+[LICENCE.md]: ../LICENCE.md
+[CHANGES.md]: ../CHANGES.md
+[index.html]: ../index.html
