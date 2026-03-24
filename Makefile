@@ -64,8 +64,11 @@ cp:
 pub: cp
 	cd ~/git/susam.net && make copub
 
+PNG = ../blob/img/wander/wander-0.2.0.png
+
 ss:
 	osascript -e 'tell app "Chrome" to set bounds of front window to {0, 0, 1200, 730}'
 	osascript -e 'tell app "Chrome" to activate'
-	screencapture -w ../blob/img/wander/wander-0.2.0.png
-	open ../blob/img/wander/wander-0.2.0.png
+	screencapture -w $(PNG)
+	/Applications/ImageOptim.app/Contents/MacOS/ImageOptim $(PNG)
+	open $(PNG)

@@ -11,7 +11,6 @@ Changelog
 - Add `ignore` property to `wander.js` to support ignoring specific URLs.
 - Show version number in the **About** dialog.
 - Add an **Open** button to open a website recommendation in a new tab.
-- Display current host console in the **Console** dialog.
 - Add console screens in the **Console* dialog: Base, Neighbours,
   Pages, Ignores, History, Discovery.
 
