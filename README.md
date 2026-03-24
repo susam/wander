@@ -490,10 +490,12 @@ improvements:
     - Use proper capitalisation, punctuation and complete sentences.
 
     These guidelines may feel old-fashioned, but they are the
-    conventions I follow.  Code can be fixed in a later commit if
-    needed.  Commit messages cannot be edited after merging without
-    rewriting history, which I want to avoid.  Therefore, ensure the
-    commit message is in good shape when submitting a pull request.
+    conventions I follow.  I am more particular about commit messages
+    than I am about code: code can be fixed in a later commit but
+    commit messages cannot be changed once merged.  Fixing them
+    requires rewriting commit history, which I want to avoid.
+    Therefore, please ensure the commit message is in good shape when
+    submitting a pull request.
 
  3. I know my code is not the most modern way to write JavaScript.
     Still, I would appreciate it if any new code follows the existing
