@@ -1,5 +1,5 @@
 <!--
-  Wander 0.2.0
+  Wander 0.3.0.dev1
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -23,6 +23,7 @@
       body {
         line-height: 1.5;
         margin: 0;
+        overflow-wrap: break-word;
       }
       body, button, input {
         font-family: courier, monospace;
@@ -63,9 +64,10 @@
       /* Dialog */
       dialog {
         border: thick solid;
+        box-sizing: border-box;
         margin: 1em auto;
         max-height: calc(100vh - 2em);
-        max-width: 42em;
+        max-width: calc(100% - 2em);
         overflow: auto;
       }
       dialog header { padding: 0 }
@@ -135,6 +137,7 @@
         body { padding: 1em }
         header { padding: 0 0 1em 0 }
         header input { order: 1; flex: 3 1 0% }
+        dialog { max-width: 45em }
         dialog nav button { flex: 0 0 calc((100% - 1em) / 3) }
         #go-button, #open-button, #about-button { order: 2; display: block }
         #wander-iframe { height: calc(100vh - 5.5em) }
@@ -142,7 +145,7 @@
     </style>
     <script src="wander.js"></script>
     <script>
-      const VERSION = '0.2.0'
+      const VERSION = '0.3.0.dev1'
       const LOGGING = true
       const TESTING = false
       const KEEP_CONSOLES = 1000
