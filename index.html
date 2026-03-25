@@ -455,11 +455,11 @@
       function setupConsoleDialogIgnores () {
         const ul = document.getElementById('ignores-list')
         ul.textContent = ''
-        if (wander.ignore.length === 0) {
+        if (ignores.length === 0) {
           createNoneItem(ul)
           return
         }
-        for (const url of wander.ignore) {
+        for (const url of ignores) {
           const li = document.createElement('li')
           ul.append(li)
           li.append(createExtLink(url))

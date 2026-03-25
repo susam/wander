@@ -14,6 +14,8 @@ Changelog
 - Allow websites relying on same-origin context to load successfully.
 - Prevent recently recommended pages from reappearing too
   soon. (contributed by [4thguy](https://codeberg.org/4thguy)).
+- Fix issue where the **Console** dialog box failed to open if the
+  `ignore` property was missing from `wander.js`.
 
 
 0.2.0 (2026-03-24)
