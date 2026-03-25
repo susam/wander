@@ -151,6 +151,7 @@
       const CONSOLE_HISTORY_SIZE = 100
       const IDLE_MODE = 0
       const WANDERING_MODE = 1
+      const HISTORY_SIZE = 10
 
       const pages = []
       const ignores = []
@@ -314,7 +315,7 @@
         document.getElementById('url-input').value = page.url
         log(`Loading page: ${page.referrer} => ${page.url}`)
         iframe.src = page.url
-        visitedPages.push(page)
+        addToHistory(page.url)
       }
 
       function pageLoadDone () {
@@ -529,7 +530,22 @@
       // ---------
 
       function pick (items) {
-        return items[Math.floor(Math.random() * items.length)]
+        let validPick = false
+        let item
+
+        do {
+          item = items[Math.floor(Math.random() * items.length)]
+
+          const inCurrentHistory = visitedPages.indexOf(item.url) > -1
+          if (inCurrentHistory) {
+            log('Ignored due to being in session history:', item.url)
+            continue
+          }
+
+          validPick = true
+        } while (!validPick)
+
+        return item
       }
 
       function isGoodURL (url) {
@@ -652,6 +668,13 @@
 
       // Tests
       // -----
+
+      function addToHistory (url) {
+        visitedPages.unshift(url)
+        if (visitedPages.length > HISTORY_SIZE) {
+          visitedPages.pop()
+        }
+      }
 
       function test () {
         function assert (condition) {
