@@ -529,6 +529,8 @@ Thanks to:
 
 - [exurd](https://codeberg.org/exurd) for adding sandbox settings to
   the wander iframe.
+- [4thguy](https://codeberg.org/4thguy) for adding a fix to prevent
+  recently recommended pages from reappearing too soon.
 
 
 Support

@@ -1,5 +1,5 @@
 <!--
-  Wander 0.3.0.dev2
+  Wander 0.3.0.dev3
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -145,13 +145,12 @@
     </style>
     <script src="wander.js"></script>
     <script>
-      const VERSION = '0.3.0.dev2'
+      const VERSION = '0.3.0.dev3'
       const LOGGING = true
       const TESTING = false
-      const CONSOLE_HISTORY_SIZE = 100
+      const HISTORY_SIZE = 100
       const IDLE_MODE = 0
       const WANDERING_MODE = 1
-      const HISTORY_SIZE = 10
 
       const pages = []
       const ignores = []
@@ -160,6 +159,7 @@
 
       let mode = IDLE_MODE
       let consolesFound = 0
+      let pagesPicked = 0
 
       const log = LOGGING ? console.log.bind(console, '[Wander]') : function () {}
 
@@ -263,17 +263,15 @@
           visitedConsoles.push({ referrer: consoleURL, url: normURL })
           consolesFound++
           log(`Discovered console URL: ${consoleURL} => ${normURL} ` +
-              `(total ${consolesFound}, cached ${visitedConsoles.length})`)
+              `(total ${consolesFound}, saved ${visitedConsoles.length})`)
         }
         if (consolesFound === prevConsolesFound) {
           log(`No new consoles found at ${wanderJSURL(consoleURL)}`)
           return
         }
-        if (visitedConsoles.length > CONSOLE_HISTORY_SIZE) {
-          visitedConsoles.splice(0, visitedConsoles.length - CONSOLE_HISTORY_SIZE)
-        }
-        log('Trimmed console cache ' +
-            `(total ${consolesFound}, cached ${visitedConsoles.length})`)
+        trimHistory(visitedConsoles)
+        log('Trimmed console history ' +
+            `(total ${consolesFound}, saved ${visitedConsoles.length})`)
       }
 
       function collectPages (consoleURL, urls) {
@@ -283,12 +281,16 @@
             log(`Skipped incompatible page URL: ${consoleURL} => ${newURL}`)
             continue
           }
+          if (isDuplicateURL(visitedPages, newURL)) {
+            log(`Skipped recently visited page URL: ${consoleURL} => ${newURL}`)
+            continue
+          }
           if (isIgnoredURL(ignores, newURL)) {
             log(`Skipped ignored page URL: ${consoleURL} => ${newURL}`)
             continue
           }
           goodPages.push({ referrer: consoleURL, url: newURL })
-          log(`Discovered page URL: ${consoleURL} => ${newURL} (cached ${goodPages.length})`)
+          log(`Discovered page URL: ${consoleURL} => ${newURL} (saved ${goodPages.length})`)
         }
         if (goodPages.length === 0) {
           log(`WARNING: No good pages found at ${wanderJSURL(consoleURL)}`)
@@ -315,7 +317,11 @@
         document.getElementById('url-input').value = page.url
         log(`Loading page: ${page.referrer} => ${page.url}`)
         iframe.src = page.url
-        addToHistory(page.url)
+        visitedPages.push(page)
+        pagesPicked++
+        trimHistory(visitedPages)
+        log('Trimmed page history ' +
+            `(total ${pagesPicked}, saved ${visitedPages.length})`)
       }
 
       function pageLoadDone () {
@@ -461,6 +467,7 @@
       }
 
       function setupConsoleDialogHistory () {
+        document.getElementById('page-history-size').textContent = HISTORY_SIZE
         const ul = document.getElementById('history-list')
         ul.textContent = ''
         if (visitedPages.length === 0) {
@@ -481,7 +488,7 @@
       }
 
       function setupConsoleDialogDiscovery () {
-        document.getElementById('console-history-size').textContent = CONSOLE_HISTORY_SIZE
+        document.getElementById('console-history-size').textContent = HISTORY_SIZE
         const ul = document.getElementById('discovery-list')
         ul.textContent = ''
         if (visitedConsoles.length === 0) {
@@ -495,7 +502,7 @@
           ul.append(li)
           li.append(p)
           p.append(
-            createConsoleLink(item.referrer), br, '\u21b3',
+            createConsoleLink(item.referrer), br, '\u21b3 ',
             createConsoleLink(item.url)
           )
         }
@@ -530,22 +537,7 @@
       // ---------
 
       function pick (items) {
-        let validPick = false
-        let item
-
-        do {
-          item = items[Math.floor(Math.random() * items.length)]
-
-          const inCurrentHistory = visitedPages.indexOf(item.url) > -1
-          if (inCurrentHistory) {
-            log('Ignored due to being in session history:', item.url)
-            continue
-          }
-
-          validPick = true
-        } while (!validPick)
-
-        return item
+        return items[Math.floor(Math.random() * items.length)]
       }
 
       function isGoodURL (url) {
@@ -561,8 +553,8 @@
         return false
       }
 
-      function isDuplicateURL (cache, url) {
-        return cache.some(function (item) {
+      function isDuplicateURL (history, url) {
+        return history.some(function (item) {
           return item.url === url
         })
       }
@@ -666,15 +658,14 @@
         li.append('None')
       }
 
-      // Tests
-      // -----
-
-      function addToHistory (url) {
-        visitedPages.unshift(url)
-        if (visitedPages.length > HISTORY_SIZE) {
-          visitedPages.pop()
+      function trimHistory (history) {
+        if (history.length > HISTORY_SIZE) {
+          history.splice(0, history.length - HISTORY_SIZE)
         }
       }
+
+      // Tests
+      // -----
 
       function test () {
         function assert (condition) {
@@ -818,13 +809,12 @@
       <section id="pages-section">
         <h2>Pages</h2>
         <p>
-          This console recommends the following pages to the Wander
-          community:
+          This console recommends the following websites and pages to
+          the Wander community:
         </p>
         <ul id="pages-list"></ul>
         <p>
-          If you click on any link above, you will navigate away from
-          this console to the selected page.
+          If you click on any link above, it will open in a new tab.
         </p>
       </section>
       <section id="ignores-section">
@@ -851,7 +841,8 @@
         <h2>Wandering History</h2>
         <p>
           Your wandering history from the current session, in reverse
-          chronological order:
+          chronological order
+          (up to <span id="page-history-size"></span> pages):
         </p>
         <ul id="history-list"></ul>
         <p>

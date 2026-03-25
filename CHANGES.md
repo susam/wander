@@ -12,6 +12,8 @@ Changelog
 
 - Prevent dialog from overflowing the screen width due to long URLs.
 - Allow websites relying on same-origin context to load successfully.
+- Prevent recently recommended pages from reappearing too
+  soon. (contributed by [4thguy](https://codeberg.org/4thguy)).
 
 
 0.2.0 (2026-03-24)
