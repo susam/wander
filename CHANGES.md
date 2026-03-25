@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.4.0 (UNRELEASED)
+------------------
+
+### Fixed
+
+- Fix issue that prevented links with `target="_blank"` from opening.
+
+
 0.3.0 (2026-03-25)
 ------------------
 
