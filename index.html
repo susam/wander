@@ -1,5 +1,5 @@
 <!--
-  Wander 0.3.0.dev1
+  Wander 0.3.0.dev2
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -145,18 +145,17 @@
     </style>
     <script src="wander.js"></script>
     <script>
-      const VERSION = '0.3.0.dev1'
+      const VERSION = '0.3.0.dev2'
       const LOGGING = true
       const TESTING = false
-      const KEEP_CONSOLES = 1000
-
+      const CONSOLE_HISTORY_SIZE = 100
       const IDLE_MODE = 0
       const WANDERING_MODE = 1
 
-      const consoles = []
       const pages = []
       const ignores = []
-      const history = []
+      const visitedConsoles = []
+      const visitedPages = []
 
       let mode = IDLE_MODE
       let consolesFound = 0
@@ -252,7 +251,7 @@
             log(`Skipped incompatible console URL: ${consoleURL} => ${normURL}`)
             continue
           }
-          if (isDuplicateURL(consoles, normURL)) {
+          if (isDuplicateURL(visitedConsoles, normURL)) {
             log(`Skipped duplicate console URL: ${consoleURL} => ${normURL}`)
             continue
           }
@@ -260,20 +259,20 @@
             log(`Skipped ignored console URL: ${consoleURL} => ${normURL}`)
             continue
           }
-          consoles.push({ referrer: consoleURL, url: normURL })
+          visitedConsoles.push({ referrer: consoleURL, url: normURL })
           consolesFound++
           log(`Discovered console URL: ${consoleURL} => ${normURL} ` +
-              `(total ${consolesFound}, cached ${consoles.length})`)
+              `(total ${consolesFound}, cached ${visitedConsoles.length})`)
         }
         if (consolesFound === prevConsolesFound) {
           log(`No new consoles found at ${wanderJSURL(consoleURL)}`)
           return
         }
-        if (consoles.length > KEEP_CONSOLES) {
-          consoles.splice(0, consoles.length - KEEP_CONSOLES)
+        if (visitedConsoles.length > CONSOLE_HISTORY_SIZE) {
+          visitedConsoles.splice(0, visitedConsoles.length - CONSOLE_HISTORY_SIZE)
         }
         log('Trimmed console cache ' +
-            `(total ${consolesFound}, cached ${consoles.length})`)
+            `(total ${consolesFound}, cached ${visitedConsoles.length})`)
       }
 
       function collectPages (consoleURL, urls) {
@@ -315,7 +314,7 @@
         document.getElementById('url-input').value = page.url
         log(`Loading page: ${page.referrer} => ${page.url}`)
         iframe.src = page.url
-        history.push(page)
+        visitedPages.push(page)
       }
 
       function pageLoadDone () {
@@ -341,11 +340,11 @@
       }
 
       function pickConsole () {
-        if (consoles.length === 0) {
+        if (visitedConsoles.length === 0) {
           log('WARNING: No valid consoles found')
           return
         }
-        const console = pick(consoles)
+        const console = pick(visitedConsoles)
         const jsURL = wanderJSURL(console.url)
         const urlAsCode = JSON.stringify(console.url)
         const iframe = document.getElementById('discovery-iframe')
@@ -407,11 +406,11 @@
         aConsoleLink.href = aConsoleLink.textContent = normBaseURL
         const lastPageLink = document.getElementById('last-page-link')
         const lastReferrerLink = document.getElementById('last-referrer-link')
-        if (history.length === 0) {
+        if (visitedPages.length === 0) {
           lastPageLink.textContent = lastReferrerLink.textContent = 'N/A'
           return
         }
-        const lastPage = history[history.length - 1]
+        const lastPage = visitedPages[visitedPages.length - 1]
         lastPageLink.textContent = ''
         lastPageLink.append(createExtLink(lastPage.url))
         lastReferrerLink.textContent = ''
@@ -463,11 +462,11 @@
       function setupConsoleDialogHistory () {
         const ul = document.getElementById('history-list')
         ul.textContent = ''
-        if (history.length === 0) {
+        if (visitedPages.length === 0) {
           createNoneItem(ul)
           return
         }
-        for (const item of history.slice().reverse()) {
+        for (const item of visitedPages.slice().reverse()) {
           const li = document.createElement('li')
           const p = document.createElement('p')
           const br = document.createElement('br')
@@ -481,13 +480,14 @@
       }
 
       function setupConsoleDialogDiscovery () {
+        document.getElementById('console-history-size').textContent = CONSOLE_HISTORY_SIZE
         const ul = document.getElementById('discovery-list')
         ul.textContent = ''
-        if (consoles.length === 0) {
+        if (visitedConsoles.length === 0) {
           createNoneItem(ul)
           return
         }
-        for (const item of consoles.slice().reverse()) {
+        for (const item of visitedConsoles.slice().reverse()) {
           const li = document.createElement('li')
           const p = document.createElement('p')
           const br = document.createElement('br')
@@ -840,8 +840,8 @@
       <section id="discovery-section">
         <h2>Discovered Consoles</h2>
         <p>
-          The following consoles were discovered during this wandering
-          session:
+          The list below shows the most recently discovered consoles
+          in this session (up to <span id="console-history-size"></span>):
         </p>
         <ul id="discovery-list"></ul>
         <p>
@@ -887,9 +887,9 @@
         the Wander network.
       </p>
       <p>
-        For more information about Wander, please
-        see <a href="https://codeberg.org/susam/wander#readme"
-               target="_blank">codeberg.org/susam/wander</a>.
+        For more information about Wander, please see
+        <a href="https://codeberg.org/susam/wander#readme"
+           target="_blank">codeberg.org/susam/wander</a>.
       </p>
       <footer><form method="dialog"><button>Close</button></form></footer>
     </dialog>

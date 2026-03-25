@@ -1,6 +1,19 @@
 Changelog
 =========
 
+0.3.0 (UNRELEASED)
+------------------
+
+### Changed
+
+- Reduce the console history size from 1000 to 100.
+
+### Fixed
+
+- Prevent dialog from overflowing the screen width due to long URLs.
+- Allow websites relying on same-origin context to load successfully.
+
+
 0.2.0 (2026-03-24)
 ------------------
 
