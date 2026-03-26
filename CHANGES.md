@@ -14,7 +14,7 @@ Changelog
 
 ### Changed
 
-- Reduce the console history size from 1000 to 100.
+- Decrease the console history size from 1000 to 100.
 
 ### Fixed
 

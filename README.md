@@ -105,10 +105,10 @@ on the base console.  You never leave it.
 With each click of the **Wander** button, the base console selects a
 console at random from the growing list of discovered consoles.
 Specifically, it selects a console from the most recently discovered
-1000 consoles.  A recommendation from that console is shown to you and
-its neighbours are added to the list.  In this way, each hop takes you
-deeper and deeper into the Wander network, while expanding the set of
-known remote consoles.
+100 consoles.  A website or web page recommended by that console is
+shown to you and its neighbours are added to the list of discovered
+consoles.  In this way, each hop takes you deeper and deeper into the
+Wander network, while expanding the set of known remote consoles.
 
 [wander.js]: https://susam.net/wander/wander.js
 
@@ -149,10 +149,8 @@ Here are the steps to set up Wander Console on your website:
    - `index.html`
    - `wander.js`
 
-   These are the only two files you need.  You can delete everything
-   else.
-
-3. Place them on your website, for example:
+3. Place the the two files somewhere on your website, preferrably at
+   the `/wander/` path, for example:
 
    ```
    wander/
@@ -381,10 +379,9 @@ Adding such links to your `wander.js` can disrupt the wandering
 experience for users of the Wander network.
 
 To test a link, open https://susam.net/wander/ (or your own Wander
-console), paste the link into the URL textbox (the pale green input
-field) and click **Go**.  If the link loads within the console, it is
-safe to include.  If it does not, please avoid adding it to your
-`wander.js`.
+console), paste the link into the URL textbox (the text input field)
+and click **Go**.  If the link loads within the console, it is safe to
+include.  If it does not, please avoid adding it to your `wander.js`.
 
 
 Design
@@ -409,10 +406,10 @@ Comparisons
 
 Wander is often compared to other projects and trends like webrings,
 Kagi Small Web and StumbleUpon.  There is indeed a lot of similarity
-between Kagi and such projects.  After all, each such service has been
-an inspiration behind Wander.  While there is a lot of similarity with
-such services, there are some differences as well.  These differences
-are noted in the following subsections.
+between Wander and such projects.  After all, each such service has
+been an inspiration behind Wander.  While there is a lot of similarity
+with such services, there are some differences as well.  These
+differences are noted in the following subsections.
 
 
 ### Wander vs Kagi Small Web
