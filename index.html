@@ -1,5 +1,5 @@
 <!--
-  Wander 0.4.0.dev2
+  Wander 0.4.0.dev3
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -145,7 +145,7 @@
     </style>
     <script src="wander.js"></script>
     <script>
-      const VERSION = '0.4.0.dev1'
+      const VERSION = '0.4.0.dev3'
       const LOGGING = true
       const TESTING = false
       const HISTORY_SIZE = 100
@@ -428,6 +428,8 @@
         lastPageLink.append(createExtLink(lastPage.url))
         lastReferrerLink.textContent = ''
         lastReferrerLink.append(createConsoleLink(lastPage.referrer))
+        const baseJSLink = document.getElementById('base-js-link')
+        baseJSLink.append(createExtLink('wander.js', 'wander.js'))
       }
 
       function setupConsoleDialogNeighbours () {
@@ -861,6 +863,10 @@
           This console ignores URLs matching the following patterns:
         </p>
         <ul id="ignores-list"></ul>
+        <p>
+          You might find the reasons for these ignore patterns in this
+          console's <span id="base-js-link"></span> file.
+        </p>
         <p>
           A URL that matches an ignore pattern is never recommended in
           this console, even if it appears in the recommendation lists
