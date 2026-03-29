@@ -4,6 +4,10 @@ Changelog
 0.4.0 (UNRELEASED)
 ------------------
 
+### Added
+
+- Add asterisk (`*`) wildcard support to ignore patterns
+
 ### Changed
 
 - Include the base console in the discovered consoles list, allowing

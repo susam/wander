@@ -265,23 +265,27 @@ const wander = {
 }
 ```
 
-Each entry in the ignore list represents a *pseudo-prefix* pattern
-that console and page URLs are matched against.  If a console URL or a
-web page URL matches one of the given pseudo-prefix patterns, your
-console will never load it.
+Each entry in the ignore list represents a *wildcard pseudo-prefix
+pattern* that console and page URLs are matched against.  If a console
+URL or a web page URL matches one of the given wildcard prefix
+patterns, your console will never load it.
 
-Let us elaborate what pseudo-prefix pattern means.  To check whether a
-URL matches a pattern, the following normalisation is done on both the
-URL and the pattern:
+Let us elaborate how the wildcard pseudo-prefix pattern.  To check
+whether a URL matches a pattern, the following normalisation is done
+on both the URL and the pattern:
 
 1. The protocol is removed from the beginning.
 2. Query parameters and fragment identifiers are removed from the end.
 3. The remainder is converted to lowercase.
 4. A trailing forward slash is added if it does not already exist.
 
-A URL is considered to match a pattern if the normalised pattern is a
-prefix of the normalised URL.  This peculiar matching algorithm has
-some desirable effects and some counterintuitive ones:
+After normalisation, the pattern is interpreted as a wildcard pattern
+where any asterisk (`*`) matches zero or more arbitrary characters in
+the normalised URL.
+
+A URL is considered to match a pattern if the normalised pattern
+matches the beginning of the normalised URL.  This peculiar matching
+algorithm has some desirable effects and some counterintuitive ones:
 
  - An ignore pattern `https://example.com/` ignores all of the
     following URLs:
@@ -324,6 +328,15 @@ some desirable effects and some counterintuitive ones:
 
   - An ignore pattern `https://example.com/foo/#world` is equivalent
     to the previous one.
+
+  - An ignore pattern `https://*.example.com/` matches all of the
+    following URLs:
+
+    ```
+    https://foo.example.com/
+    https://bar.example.com/baz
+    https://web.archive.org/web/*/https://foo.example.com/
+    ```
 
   - An ignore pattern `httpS://Example.COM/Foo` matches all of the
     following URLs:

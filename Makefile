@@ -3,6 +3,7 @@
 
 checks:
 	sed 's/ method="dialog"//' index.html > /tmp/tmp.html
+	grep -q 'TESTING = false' index.html
 	tidy -q -e --warn-proprietary-attributes no /tmp/tmp.html
 	npx standard --plugin html --global wander index.html
 	npx standard dev/

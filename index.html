@@ -578,15 +578,23 @@
         })
       }
 
+      // RFC 3986, section 3.1.
+      const PROTOCOL_RE = /^[A-Za-z][A-Za-z0-9+\-.]*:\/\//
+
       function isURLMatchingIgnore (ignore, url) {
         function norm (s) {
-          s = s.replace(/^.*:\/\//, '') // Disregard protocol.
+          s = s.replace(PROTOCOL_RE, '') // Disregard protocol.
           s = s.replace(/[?#].*$/, '') // Disregard query string and fragment.
           s = s.toLowerCase() // Disregard case.
           if (!s.endsWith('/')) s += '/' // Treat foo and foo/ as the same.
           return s
         }
-        return norm(url).startsWith(norm(ignore))
+        const re = new RegExp(
+          norm(ignore)
+            .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
+            .replace(/\*/g, '.*')
+        )
+        return re.test(norm(url))
       }
 
       function isArrayOfStrings (value) {
@@ -599,8 +607,7 @@
 
       function normaliseGotoURL (url) {
         let result = url.trim()
-        const re = /^[A-Za-z][A-Za-z0-9+\-.]*:\/\// // RFC 3986, section 3.1.
-        if (!re.test(result)) {
+        if (!PROTOCOL_RE.test(result)) {
           let protocol = window.location.protocol
           if (protocol !== 'http:' && protocol !== 'https:') {
             protocol = 'https:'
@@ -694,13 +701,31 @@
         assert(isURLMatchingIgnore('http://foo/', 'http://foo/'))
         assert(isURLMatchingIgnore('http://foo/', 'http://foo'))
         assert(isURLMatchingIgnore('http://foo', 'http://foo/'))
+        assert(isURLMatchingIgnore('http://foo/bar', 'http://foo/bar?hello'))
+        assert(isURLMatchingIgnore('http://foo/bar', 'http://foo/bar/?hello'))
+        assert(isURLMatchingIgnore('http://foo/bar/', 'http://foo/bar?hello'))
+        assert(isURLMatchingIgnore('http://foo/bar/', 'http://foo/bar/?hello'))
+        assert(isURLMatchingIgnore('http://foo/bar?baz', 'http://foo/bar?hello'))
+        assert(isURLMatchingIgnore('http://foo/bar?baz', 'http://foo/bar/?hello'))
+        assert(isURLMatchingIgnore('http://foo/bar/?baz', 'http://foo/bar?hello'))
+        assert(isURLMatchingIgnore('http://foo/bar/?baz', 'http://foo/bar/?hello'))
+        assert(isURLMatchingIgnore('http://foo/bar/#baz', 'http://foo/bar/?hello'))
+        assert(isURLMatchingIgnore('http://foo/bar/?baz', 'http://foo/bar/#hello'))
         assert(isURLMatchingIgnore('http://foo/bar.html', 'http://foo/bar.html?hello'))
+        assert(isURLMatchingIgnore('http://foo/bar.html?hello', 'http://foo/bar.html'))
+        assert(isURLMatchingIgnore('http://*example/', 'http://fooexample/'))
+        assert(isURLMatchingIgnore('http://*example/', 'http://example/'))
+        assert(isURLMatchingIgnore('http://*example/', 'http://foo.example/'))
+        assert(isURLMatchingIgnore('http://*.example/', 'http://foo.example/'))
+        assert(isURLMatchingIgnore('http://*.example/', 'http://.example/'))
+        assert(isURLMatchingIgnore('http://*.example/', 'https://archive/*/https://foo.example/'))
 
         assert(!isURLMatchingIgnore('f', ''))
         assert(!isURLMatchingIgnore('f/', 'fo'))
         assert(!isURLMatchingIgnore('http://foo/bar', 'http://foo/'))
         assert(!isURLMatchingIgnore('http://foo/', 'http://foobar'))
         assert(!isURLMatchingIgnore('http://foo', 'http://foobar'))
+        assert(!isURLMatchingIgnore('http://*.example/', 'http://fooexample/'))
 
         assert(isIgnoredURL(['http://foo/bar'], 'http://foo/bar/'))
         assert(isIgnoredURL(['http://foo/bar/'], 'http://foo/bar'))
@@ -742,9 +767,9 @@
 
       if (TESTING) {
         test()
+      } else {
+        window.addEventListener('load', init)
       }
-
-      window.addEventListener('load', init)
     </script>
   </head>
   <body>
