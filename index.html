@@ -549,10 +549,8 @@
       }
 
       function isFileURL (url) {
-        return wander._skipURLCheck || (
-          typeof url === 'string' && URL.canParse(url) &&
-            new URL(url).protocol === 'file:'
-        )
+        return typeof url === 'string' && URL.canParse(url) &&
+          new URL(url).protocol === 'file:'
       }
 
       function isGoodURL (url) {
