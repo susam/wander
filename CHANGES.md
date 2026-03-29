@@ -4,6 +4,11 @@ Changelog
 0.4.0 (UNRELEASED)
 ------------------
 
+### Changed
+
+- Include the base console in the discovered consoles list, allowing
+  it to be selected by the random picker during wandering.
+
 ### Fixed
 
 - Fix issue that prevented links with `target="_blank"` from opening.

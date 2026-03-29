@@ -1,5 +1,5 @@
 <!--
-  Wander 0.4.0.dev1
+  Wander 0.4.0.dev2
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -174,8 +174,10 @@
         initConsoleDialog()
         initVersion()
         initIgnores(wander.ignore || [])
-        collectConsoles(normaliseWanderURL(window.location.href), wander.consoles || [])
-        collectPages(normaliseWanderURL(window.location.href), wander.pages || [])
+
+        const baseConsoleURL = normaliseWanderURL(window.location.href)
+        collectConsoles(baseConsoleURL, [baseConsoleURL].concat(wander.consoles || []))
+        collectPages(baseConsoleURL, wander.pages || [])
         pickPage()
         log('Initialised')
       }
@@ -248,6 +250,10 @@
         const prevConsolesFound = consolesFound
         for (const url of urls) {
           const normURL = normaliseWanderURL(url)
+          if (isFileURL(normURL)) {
+            log(`Skipped file URL: ${consoleURL} => ${normURL}`)
+            continue
+          }
           if (!isGoodURL(normURL)) {
             log(`Skipped incompatible console URL: ${consoleURL} => ${normURL}`)
             continue
@@ -538,6 +544,13 @@
 
       function pick (items) {
         return items[Math.floor(Math.random() * items.length)]
+      }
+
+      function isFileURL (url) {
+        return wander._skipURLCheck || (
+          typeof url === 'string' && URL.canParse(url) &&
+            new URL(url).protocol === 'file:'
+        )
       }
 
       function isGoodURL (url) {
