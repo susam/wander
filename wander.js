@@ -16,5 +16,6 @@ const wander = {
     // Fake examples, please replace with actual URLs.
     'https://cookiepester.example/',
     'https://humblebrags.example/',
+    'https://*.midreadpopup.example/',
   ]
 }
