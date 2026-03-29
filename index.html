@@ -154,7 +154,7 @@
 
       const pages = []
       const ignores = []
-      const visitedConsoles = []
+      const consoles = []
       const visitedPages = []
 
       let mode = IDLE_MODE
@@ -258,7 +258,7 @@
             log(`Skipped incompatible console URL: ${consoleURL} => ${normURL}`)
             continue
           }
-          if (isDuplicateURL(visitedConsoles, normURL)) {
+          if (isDuplicateURL(consoles, normURL)) {
             log(`Skipped duplicate console URL: ${consoleURL} => ${normURL}`)
             continue
           }
@@ -266,18 +266,18 @@
             log(`Skipped ignored console URL: ${consoleURL} => ${normURL}`)
             continue
           }
-          visitedConsoles.push({ referrer: consoleURL, url: normURL })
+          consoles.push({ referrer: consoleURL, url: normURL })
           consolesFound++
           log(`Discovered console URL: ${consoleURL} => ${normURL} ` +
-              `(total ${consolesFound}, saved ${visitedConsoles.length})`)
+              `(total ${consolesFound}, saved ${consoles.length})`)
         }
         if (consolesFound === prevConsolesFound) {
           log(`No new consoles found at ${wanderJSURL(consoleURL)}`)
           return
         }
-        trimHistory(visitedConsoles)
+        trimHistory(consoles)
         log('Trimmed console history ' +
-            `(total ${consolesFound}, saved ${visitedConsoles.length})`)
+            `(total ${consolesFound}, saved ${consoles.length})`)
       }
 
       function collectPages (consoleURL, urls) {
@@ -353,11 +353,11 @@
       }
 
       function pickConsole () {
-        if (visitedConsoles.length === 0) {
+        if (consoles.length === 0) {
           log('WARNING: No valid consoles found')
           return
         }
-        const console = pick(visitedConsoles)
+        const console = pick(consoles)
         const jsURL = wanderJSURL(console.url)
         const urlAsCode = JSON.stringify(console.url)
         const iframe = document.getElementById('discovery-iframe')
@@ -497,11 +497,11 @@
         document.getElementById('console-history-size').textContent = HISTORY_SIZE
         const ul = document.getElementById('discovery-list')
         ul.textContent = ''
-        if (visitedConsoles.length === 0) {
+        if (consoles.length === 0) {
           createNoneItem(ul)
           return
         }
-        for (const item of visitedConsoles.slice().reverse()) {
+        for (const item of consoles.slice().reverse()) {
           const li = document.createElement('li')
           const p = document.createElement('p')
           const br = document.createElement('br')
