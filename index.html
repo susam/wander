@@ -147,7 +147,6 @@
     <script>
       const VERSION = '0.4.0.dev3'
       const LOGGING = true
-      const TESTING = false
       const HISTORY_SIZE = 100
       const IDLE_MODE = 0
       const WANDERING_MODE = 1
@@ -554,7 +553,7 @@
       }
 
       function isGoodURL (url) {
-        if (wander._skipURLCheck) {
+        if (wander._checkURLs === 'no') {
           return true
         }
         if (typeof url === 'string' && URL.canParse(url)) {
@@ -764,6 +763,8 @@
         assert(wanderJSURL('http://foo//') === 'http://foo//wander.js')
         assert(wanderJSURL('http://foo/bar.html') === 'http://foo/wander.js')
       }
+
+      const TESTING = false
 
       if (TESTING) {
         test()
