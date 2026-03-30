@@ -17,5 +17,5 @@ const wander = {
     'https://cookiepester.example/',
     'https://humblebrags.example/',
     'https://*.midreadpopup.example/',
-  ]
+  ],
 }

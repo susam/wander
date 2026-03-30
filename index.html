@@ -1,5 +1,5 @@
 <!--
-  Wander 0.4.0.dev3
+  Wander 0.4.0.dev4
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -145,7 +145,7 @@
     </style>
     <script src="wander.js"></script>
     <script>
-      const VERSION = '0.4.0.dev3'
+      const VERSION = '0.4.0.dev4'
       const LOGGING = true
       const HISTORY_SIZE = 100
       const IDLE_MODE = 0
@@ -317,11 +317,21 @@
         }
         const iframe = document.getElementById('wander-iframe')
         const page = pick(pages)
+        const referral = wander.referral
+        let url
         log('----- BEGIN WANDERING -----')
         mode = WANDERING_MODE
         document.getElementById('url-input').value = page.url
-        log(`Loading page: ${page.referrer} => ${page.url}`)
-        iframe.src = page.url
+        log(`Picked page: ${page.referrer} => ${page.url}`)
+        if (referral === 'no') {
+          url = page.url
+        } else if (referral === 'version') {
+          url = addVia(page.url, 'wander-' + VERSION)
+        } else {
+          url = addVia(page.url, normaliseWanderURL(location.href))
+        }
+        log(`Loading page: ${page.referrer} => ${url}`)
+        iframe.src = url
         visitedPages.push(page)
         pagesPicked++
         trimHistory(visitedPages)
@@ -683,6 +693,21 @@
         }
       }
 
+      function addVia (websiteURL, consoleURL) {
+        const url = new URL(websiteURL)
+        const via = 'via=' + weakEncodeURIComponent(consoleURL)
+        url.search += url.search ? ('&' + via) : ('?' + via)
+        return url.href
+      }
+
+      function weakEncodeURIComponent (s) {
+        // Encode a Wander console URL for use as a query parameter
+        // value on another website, but keep ':' and '/' readable so
+        // the website owner can see the Wander console URL fairly
+        // intact in their logs and copy-paste it easily.
+        return encodeURIComponent(s).replace(/%2F/g, '/').replace(/%3A/g, ':')
+      }
+
       // Tests
       // -----
 
@@ -762,6 +787,17 @@
         assert(wanderJSURL('http://foo/') === 'http://foo/wander.js')
         assert(wanderJSURL('http://foo//') === 'http://foo//wander.js')
         assert(wanderJSURL('http://foo/bar.html') === 'http://foo/wander.js')
+
+        assert(addVia('https://foo/', 'https://bar/') === 'https://foo/?via=https://bar/')
+        assert(addVia('https://foo/', 'https://bar/@me') === 'https://foo/?via=https://bar/%40me')
+        assert(addVia('https://foo/', 'https://bar/?me') === 'https://foo/?via=https://bar/%3Fme')
+        assert(addVia('https://foo/', 'https://bar/#me') === 'https://foo/?via=https://bar/%23me')
+        assert(addVia('https://foo/?bar', 'https://bar/') === 'https://foo/?bar&via=https://bar/')
+        assert(addVia('https://foo/#bar', 'https://bar/') === 'https://foo/?via=https://bar/#bar')
+        assert(addVia('https://foo/#bar', 'https://bar/#me') === 'https://foo/?via=https://bar/%23me#bar')
+        assert(addVia('https://foo/?bar', 'https://bar/?me') === 'https://foo/?bar&via=https://bar/%3Fme')
+        assert(addVia('https://foo/?bar=baz', 'https://bar/?who=me') === 'https://foo/?bar=baz&via=https://bar/%3Fwho%3Dme')
+        assert(addVia('https://foo/?bar=baz#qux', 'https://bar/?who=me#me') === 'https://foo/?bar=baz&via=https://bar/%3Fwho%3Dme%23me#qux')
       }
 
       const TESTING = false

@@ -6,7 +6,15 @@ Changelog
 
 ### Added
 
-- Add asterisk (`*`) wildcard support to ignore patterns
+- Add asterisk (`*`) wildcard support to ignore patterns.
+- Add referral query parameter (`via`) while loading recommended URLs
+  in `<iframe>`.
+- Add referral query parameter (`via`) to recommended URLs loaded in `<iframe>`.
+- Support configuration parameter `referral = 'no'` to disable the
+  referral parameter.
+- Support configuration parameter `referral = 'version'` to set the
+  referral value to the literal label `wander-` followed by version
+  number, e.g. `wander-0.4.0`.
 
 ### Changed
 
