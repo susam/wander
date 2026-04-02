@@ -38,6 +38,9 @@ Contents
   * [Wander vs Kagi Small Web](#wander-vs-kagi-small-web)
   * [Wander vs StumbleUpon](#wander-vs-stumbleupon)
   * [Wander vs Webrings](#wander-vs-webrings)
+* [Join the Community](#join-the-community)
+  * [Share Your Console](#share-your-console)
+  * [Join Our IRC Channel](#join-our-irc-channel)
 * [Contributing](#contributing)
 * [Credits](#credits)
 * [Support](#support)
@@ -284,9 +287,9 @@ pattern* that console and page URLs are matched against.  If a console
 URL or a web page URL matches one of the given wildcard prefix
 patterns, your console will never load it.
 
-Let us elaborate how the wildcard pseudo-prefix pattern.  To check
-whether a URL matches a pattern, the following normalisation is done
-on both the URL and the pattern:
+Let us elaborate how the wildcard pseudo-prefix pattern works.  To
+check whether a URL matches a pattern, the following normalisation is
+done on both the URL and the pattern:
 
 1. The protocol is removed from the beginning.
 2. Query parameters and fragment identifiers are removed from the end.
@@ -322,8 +325,8 @@ algorithm has some desirable effects and some counterintuitive ones:
 
     But counterintuitively, it does not ignore the URL
     `https://example.com/foobar` because the normalised pattern
-    `://example.com/foo/` is not a prefix of the normalised URL
-    `://example.com/foobar/`.
+    `example.com/foo/` is not a prefix of the normalised URL
+    `example.com/foobar/`.
 
   - An ignore pattern `https://example.com/foo/` is equivalent to the
     previous one.  This one makes it more obvious why it doesn't match
@@ -554,6 +557,38 @@ which other consoles to link to.  This means you are in full control
 of your recommendations and your Wander neighbourhood.
 
 [stumble]: https://en.wikipedia.org/wiki/StumbleUpon
+
+
+Join the Community
+------------------
+
+### Share Your Console
+
+If you have set up a Wander Console on your website, please share a
+link to it in the following community thread:
+[codeberg.org/susam/wander/issues/1][thread].
+
+Doing so helps other members of the community learn about the
+existence of your console and link to it from their own consoles.
+
+
+### Join Our IRC Channel
+
+We have an Internet Relay Chat (IRC) channel where you can meet and
+greet other members of the Wander Console community.  If you are new
+to IRC, you can join the channel using the following web gateway:
+[web.libera.chat/#wander][webchat].
+
+If you use an IRC client, connect to `irc.libera.chat` (port 6667 for
+plaintext or 6697 for TLS) and then run `/join #wander`.
+
+This channel is for people who enjoy building personal websites and
+want to hang out together.  You are welcome to share your Wander
+Console URL, link to your website or your recent articles as well as
+links to other non-commercial personal websites.
+
+[webchat]: http://web.libera.chat/#wander
+
 
 
 Contributing
