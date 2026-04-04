@@ -133,10 +133,10 @@ consoles.  You might want to change the base console to encounter such
 customised consoles.  Further, different console owners maintain
 different ignore lists that define which websites must never appear on
 their console.  An ignore list ([see example][wander.js]) typically
-contains commercial websites that do not fit the spirit of small web,
-as well as defunct or incompatible websites that do not load in the
-console.  A console with a well maintained *ignore* list ensures that
-a visitor to that console has lower likelihood of encountering
+contains commercial websites that do not fit the spirit of the small
+web, as well as defunct or incompatible websites that do not load in
+the console.  A console with a well maintained *ignore* list ensures
+that a visitor to that console has a lower likelihood of encountering
 commercial or broken websites.  So another reason for changing your
 base console is to use one with a better ignore list.
 
@@ -379,7 +379,7 @@ solution that feels more intuitive for all edge cases would take
 significantly more code and would also take longer to explain.
 
 
-### Customise 'Via' Parameter
+### Customise 'via' Parameter
 
 #### Default Behaviour
 
@@ -583,7 +583,7 @@ If you use an IRC client, connect to `irc.libera.chat` (port 6667 for
 plaintext or 6697 for TLS) and then run `/join #wander`.
 
 This channel is for people who enjoy building personal websites and
-want to hang out together.  You are welcome to share your Wander
+want to talk to each other.  You are welcome to share your Wander
 Console URL, link to your website or your recent articles as well as
 links to other non-commercial personal websites.
 

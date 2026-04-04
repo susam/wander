@@ -13,21 +13,14 @@ Release Checklist
 
  3. Update copyright in [LICENCE.md][].
  4. Update [CHANGES.md][]
- 5. Update version number in this file (2 places).
+ 5. Update version number in this file (1 place).
  6. Update version number in [index.html][] (2 places).
  7. Run the following commands:
 
-    ```
+    ```sh
     make checks
     git status
     git add -p
-
-    VER=0.3.0
-    git commit -m "Set version to $VER"
-    git tag "$VER" -m "Wander $VER"
-    make push
-    git push cb "$VER"
-    git push gh "$VER"
     ```
 
  8. Write release page on personal website:
@@ -38,7 +31,24 @@ Release Checklist
     em content/tree/code/news/wander/$VER.post.html
     ```
 
- 9. Commit and push personal website.
+ 9. Commit and push personal website.  Test.
+
+10. Run the following commands:
+
+    ```sh
+    make checks
+    git status
+    git add -p
+    ```
+
+    ```sh
+    VER=0.4.0
+    git commit -m "Set version to $VER"
+    git tag "$VER" -m "Wander $VER"
+    make push
+    git push cb "$VER"
+    git push gh "$VER"
+    ```
 
 10. Make a new release on Codeberg.
 
