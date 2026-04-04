@@ -65,7 +65,7 @@ cp:
 pub: cp
 	cd ~/git/susam.net && make copub
 
-PNG = ../blob/img/wander/wander-0.2.0.png
+PNG = ../blob/img/wander/wander.png
 
 ss:
 	osascript -e 'tell app "Chrome" to set bounds of front window to {0, 0, 1200, 730}'
