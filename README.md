@@ -14,7 +14,7 @@ browsing the small web of personal websites.
 
 Visit https://susam.net/wander/ to see an example of a Wander console.
 
-[IMG]: https://susam.github.io/blob/img/wander/wander-0.2.0.png
+[IMG]: https://susam.github.io/blob/img/wander/wander-0.4.0.png
 [CON]: https://susam.net/wander/
 
 
