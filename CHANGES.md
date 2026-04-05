@@ -37,8 +37,9 @@ Changelog
 
 - Prevent dialog from overflowing the screen width due to long URLs.
 - Allow websites relying on same-origin context to load successfully.
+  (contributed by [exurd](https://codeberg.org/exurd)).
 - Prevent recently recommended pages from reappearing too
-  soon. (contributed by [4thguy](https://codeberg.org/4thguy)).
+  soon. (contributed by [4thguy](https://codeberg.org/4thguy))
 - Fix issue where the **Console** dialog box failed to open if the
   `ignore` property was missing from `wander.js`.
 
@@ -83,7 +84,7 @@ Changelog
   `wander.js` from altering your console's user interface, state or
   behaviour.
 - Add sandbox settings to the `<iframe>` that loads recommended web
-  pages (contributed by [exurd](https://codeberg.org/exurd)).
+  pages.  (contributed by [exurd](https://codeberg.org/exurd))
 
 
 0.1.0 (2026-03-19)
