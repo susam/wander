@@ -343,8 +343,13 @@ algorithm has some desirable effects and some counterintuitive ones:
     https://example.com/foo/bar/
     ```
 
+    In practice, there is usually no need to use a pattern like this.
+    The simpler pattern `https://example.com/foo/` behaves the same
+    and is clearer.
+
   - An ignore pattern `https://example.com/foo/#world` is equivalent
-    to the previous one.
+    to the previous one.  As before, the simpler pattern
+    `https://example.com/foo/` behaves the same and is clearer.
 
   - An ignore pattern `https://*.example.com/` matches all of the
     following URLs:
