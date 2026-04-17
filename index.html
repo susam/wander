@@ -1,5 +1,5 @@
 <!--
-  Wander 0.4.0
+  Wander 0.5.0.dev1
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -67,13 +67,12 @@
         box-sizing: border-box;
         margin: 1em auto;
         max-height: calc(100vh - 2em);
-        max-width: calc(100% - 2em);
+        width: min(45em, calc(100% - 2em));
         overflow: auto;
       }
       dialog header { padding: 0 }
-      dialog header::before { content: "" }
-      dialog header::before, dialog header form { flex: 1 1 0% }
-      dialog header form button {
+      dialog header span, dialog header form { flex: 1 1 0% }
+      dialog header button {
         box-sizing: border-box;
         height: 2em;
         min-height: 0;
@@ -83,10 +82,6 @@
       dialog header h1 {
         flex: 0 1 auto;
         margin: 0;
-        text-align: center;
-      }
-      dialog header div {
-        flex: 0 0 100%;
         text-align: center;
       }
       dialog header form {
@@ -99,20 +94,15 @@
       dialog h2 + p {
         margin-top: 0.5em;
       }
+      dialog nav button {
+        display: block;
+        margin: 1em auto;
+        width: min(30em, calc(100% - 2em));
+      }
       dialog footer button {
         width: 6em;
         display: block;
         margin: 1.5em auto 0.5em auto;
-      }
-      dialog nav {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5em;
-        justify-content: center;
-        margin: 1em 0;
-      }
-      dialog nav button {
-        flex: 0 0 8em;
       }
       svg {
         color: inherit;
@@ -137,8 +127,6 @@
         body { padding: 1em }
         header { padding: 0 0 1em 0 }
         header input { order: 1; flex: 3 1 0% }
-        dialog { max-width: 45em }
-        dialog nav button { flex: 0 0 calc((100% - 1em) / 3) }
         #go-button, #open-button, #about-button { order: 2; display: block }
         #wander-iframe { height: calc(100vh - 5.5em) }
       }
@@ -213,24 +201,38 @@
       }
 
       function initConsoleDialog () {
-        const menu = ['base', 'neighbours', 'pages', 'ignores', 'history', 'discovery']
-        function showSection (prefix) {
-          for (const item of menu) {
-            const button = document.getElementById(item + '-button')
-            const section = document.getElementById(item + '-section')
-            button.disabled = false
-            section.style.display = 'none'
-          }
-          document.getElementById(prefix + '-button').disabled = true
-          document.getElementById(prefix + '-section').style.display = 'block'
-        }
-        for (const item of menu) {
-          const button = document.getElementById(item + '-button')
+        const menu = document.getElementById('menu-section')
+        const back = document.getElementById('back-button')
+        for (const button of menu.querySelectorAll('button')) {
+          const key = button.id.replace('-button', '')
           button.addEventListener('click', function (e) {
-            showSection(item)
+            changeConsoleDialogSection(key)
           })
         }
-        showSection(menu[0])
+        back.addEventListener('click', function () {
+          changeConsoleDialogSection('menu')
+        })
+      }
+
+      function showConsoleDialog () {
+        setupConsoleDialogBase()
+        setupConsoleDialogNeighbours()
+        setupConsoleDialogPages()
+        setupConsoleDialogIgnores()
+        setupConsoleDialogHistory()
+        setupConsoleDialogDiscovery()
+        changeConsoleDialogSection('menu')
+        document.getElementById('console-dialog').showModal()
+      }
+
+      function changeConsoleDialogSection (key) {
+        const dialog = document.getElementById('console-dialog')
+        const back = document.getElementById('back-button')
+        back.style.visibility = key === 'menu' ? 'hidden' : 'visible'
+        for (const section of dialog.querySelectorAll('section')) {
+          section.style.display = 'none'
+        }
+        document.getElementById(key + '-section').style.display = 'block'
       }
 
       function initVersion () {
@@ -407,16 +409,6 @@
 
       // Console Dialog
       // --------------
-
-      function showConsoleDialog () {
-        setupConsoleDialogBase()
-        setupConsoleDialogNeighbours()
-        setupConsoleDialogPages()
-        setupConsoleDialogIgnores()
-        setupConsoleDialogHistory()
-        setupConsoleDialogDiscovery()
-        document.getElementById('console-dialog').showModal()
-      }
 
       function setupConsoleDialogBase () {
         const normBaseURL = normaliseWanderURL(window.location.href)
@@ -834,16 +826,20 @@
     </svg>
     <dialog id="console-dialog">
       <header>
-        <h1>Console</h1><form method="dialog"><button>x</button></form>
+        <span><button id="back-button">&larr;</button></span>
+        <h1>Console</h1>
+        <form method="dialog"><button>x</button></form>
       </header>
-      <nav>
-        <button id="base-button">Base</button>
-        <button id="neighbours-button">Neighbours</button>
-        <button id="pages-button">Pages</button>
-        <button id="ignores-button">Ignores</button>
-        <button id="history-button">History</button>
-        <button id="discovery-button">Discovery</button>
-      </nav>
+      <section id="menu-section">
+        <nav>
+          <button id="base-button">Base</button>
+          <button id="neighbours-button">Neighbours</button>
+          <button id="pages-button">Pages</button>
+          <button id="ignores-button">Ignores</button>
+          <button id="history-button">History</button>
+          <button id="discovery-button">Discovery</button>
+        </nav>
+      </section>
       <section id="base-section">
         <h2>Base Console</h2>
         <p>
@@ -944,7 +940,7 @@
           console and its wander.js file.
         </p>
       </section>
-      <footer><form method="dialog"><button>Close</button></form></footer>
+      <footer><form><button>Close</button></form></footer>
     </dialog>
     <dialog id="about-dialog">
       <header>
