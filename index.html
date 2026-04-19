@@ -517,7 +517,7 @@
         const baseURL = normaliseWanderURL(window.location.href)
         crawlConsoleMap[baseURL] = {
           depth: 0,
-          pages: wander.pages,
+          referrers: [],
           visited: false,
         }
         saveCrawlConsoles(baseURL, wander.consoles || [], wander.pages || [])
