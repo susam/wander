@@ -463,6 +463,10 @@
             continue
           }
           const normURL = normaliseWanderURL(url)
+          if (isIgnoredURL(ignores, normURL)) {
+            log(`Skipped ignored console URL: ${referrerURL} => ${normURL}`)
+            continue
+          }
           if (!crawlConsoleMap[normURL]) {
             // Save new referenced consoles in the map.
             crawlConsoleQueue.push(normURL)
@@ -482,6 +486,10 @@
         for (const url of pageURLs) {
           if (!URL.canParse(url)) {
             log(`Skipped bad page URL: ${referrerURL} => ${url}`)
+            continue
+          }
+          if (isIgnoredURL(ignores, url)) {
+            log(`Skipped ignored page URL: ${referrerURL} => ${url}`)
             continue
           }
           if (!crawlPageMap[url]) {
