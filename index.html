@@ -483,7 +483,7 @@
         crawlConsoleMap[baseURL] = {
           depth: 0,
           referrers: [],
-          visited: false
+          visited: true
         }
         saveCrawlConsoles(baseURL, wander.consoles || [], wander.pages || [])
         log('Starting crawl')
