@@ -1,5 +1,5 @@
 <!--
-  Wander 0.5.0.dev3
+  Wander 0.5.0
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -7,9 +7,6 @@
 <html lang="en">
   <head>
     <title>Wander Console - Discover the Small Web</title>
-    <script>
-      const VERSION = '0.5.0.dev3'
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
@@ -145,6 +142,7 @@
     </style>
     <script src="wander.js"></script>
     <script>
+      const VERSION = '0.5.0'
       const LOGGING = true
       const HISTORY_SIZE = 100
       const IDLE_MODE = 0
@@ -482,7 +480,7 @@
         crawlConsoleMap[baseURL] = {
           depth: 0,
           referrers: [],
-          visited: false,
+          visited: false
         }
         saveCrawlConsoles(baseURL, wander.consoles || [], wander.pages || [])
         log('Starting crawl')

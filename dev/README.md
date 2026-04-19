@@ -4,8 +4,7 @@ Developer Notes
 Release Checklist
 -----------------
 
- 1. If taking a new screenshot, update version number in `Makefile`.
-    Then take a new screenshot:
+ 1. Take screenshot if necessary:
 
     ```
     make ss
@@ -42,7 +41,7 @@ Release Checklist
     ```
 
     ```sh
-    VER=0.4.0
+    VER=0.5.0
     git commit -m "Set version to $VER"
     git tag "$VER" -m "Wander $VER"
     make push
