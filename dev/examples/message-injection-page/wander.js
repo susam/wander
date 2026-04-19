@@ -1,4 +1,4 @@
 const wander = { // eslint-disable-line no-unused-vars
-  _skipURLCheck: true,
+  _checkURLs: false,
   pages: ['page.html']
 }

@@ -1,5 +1,5 @@
 <!--
-  Wander 0.5.0.dev1
+  Wander 0.5.0.dev2
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -99,6 +99,15 @@
         margin: 1em auto;
         width: min(30em, calc(100% - 2em));
       }
+      dialog header + div {
+        text-align: center;
+      }
+      dialog details {
+        padding-left: 2em;
+      }
+      dialog details p {
+        padding-left: 1em;
+      }
       dialog footer button {
         width: 6em;
         display: block;
@@ -119,7 +128,7 @@
         height: calc(100vh - 6.5em);
         width: 100%;
       }
-      #discovery-iframe {
+      .loader-iframe-template {
         display: none;
       }
       /* Wide screen */
@@ -138,17 +147,24 @@
       const HISTORY_SIZE = 100
       const IDLE_MODE = 0
       const WANDERING_MODE = 1
+      const WANDER_MODE = 2
+      const CRAWL_MODE = 3
+      const MAX_CRAWL_CONSOLES = 10000
 
       const pages = []
       const ignores = []
       const consoles = []
       const visitedPages = []
+      const crawlConsoleQueue = []
+      const crawlConsoleMap = {}
+      const crawlPageMap = {}
 
       let mode = IDLE_MODE
       let consolesFound = 0
       let pagesPicked = 0
-
-      const log = LOGGING ? console.log.bind(console, '[Wander]') : function () {}
+      let crawlTimer = null
+      let crawlConsoleCounter
+      let crawlPageCounter
 
       // Main Console
       // ------------
@@ -162,9 +178,9 @@
         initVersion()
         initIgnores(wander.ignore || [])
 
-        const baseConsoleURL = normaliseWanderURL(window.location.href)
-        collectConsoles(baseConsoleURL, [baseConsoleURL].concat(wander.consoles || []))
-        collectPages(baseConsoleURL, wander.pages || [])
+        const baseURL = normaliseWanderURL(window.location.href)
+        saveWanderConsoles(baseURL, [baseURL].concat(wander.consoles || []))
+        saveWanderPages(baseURL, wander.pages || [])
         pickPage()
         log('Initialised')
       }
@@ -201,6 +217,7 @@
       }
 
       function initConsoleDialog () {
+        const dialog = document.getElementById('console-dialog')
         const menu = document.getElementById('menu-section')
         const back = document.getElementById('back-button')
         for (const button of menu.querySelectorAll('button')) {
@@ -209,6 +226,10 @@
             changeConsoleDialogSection(key)
           })
         }
+        dialog.addEventListener('close', function () {
+          log('Dialog box closed')
+          clearTimeout(crawlTimer)
+        })
         back.addEventListener('click', function () {
           changeConsoleDialogSection('menu')
         })
@@ -228,11 +249,16 @@
       function changeConsoleDialogSection (key) {
         const dialog = document.getElementById('console-dialog')
         const back = document.getElementById('back-button')
+        log(`Changing console dialog to section: ${key}`)
+        clearTimeout(crawlTimer)
         back.style.visibility = key === 'menu' ? 'hidden' : 'visible'
         for (const section of dialog.querySelectorAll('section')) {
           section.style.display = 'none'
         }
         document.getElementById(key + '-section').style.display = 'block'
+        if (key === 'crawl') {
+          startCrawl()
+        }
       }
 
       function initVersion () {
@@ -247,33 +273,37 @@
         }
       }
 
-      function collectConsoles (consoleURL, urls) {
+      function saveWanderConsoles (referrerURL, consoleURLs) {
         const prevConsolesFound = consolesFound
-        for (const url of urls) {
-          const normURL = normaliseWanderURL(url)
-          if (isFileURL(normURL)) {
-            log(`Skipped file URL: ${consoleURL} => ${normURL}`)
+        for (const url of consoleURLs) {
+          if (!URL.canParse(url)) {
+            log(`Skipped bad console URL: ${referrerURL} => ${url}`)
             continue
           }
-          if (!isGoodURL(normURL)) {
-            log(`Skipped incompatible console URL: ${consoleURL} => ${normURL}`)
+          const normURL = normaliseWanderURL(url)
+          if (isFileURL(normURL)) {
+            log(`Skipped file URL: ${referrerURL} => ${normURL}`)
+            continue
+          }
+          if (!isCompatibleURL(normURL)) {
+            log(`Skipped incompatible console URL: ${referrerURL} => ${normURL}`)
             continue
           }
           if (isDuplicateURL(consoles, normURL)) {
-            log(`Skipped duplicate console URL: ${consoleURL} => ${normURL}`)
+            log(`Skipped duplicate console URL: ${referrerURL} => ${normURL}`)
             continue
           }
           if (isIgnoredURL(ignores, normURL)) {
-            log(`Skipped ignored console URL: ${consoleURL} => ${normURL}`)
+            log(`Skipped ignored console URL: ${referrerURL} => ${normURL}`)
             continue
           }
-          consoles.push({ referrer: consoleURL, url: normURL })
+          consoles.push({ referrer: referrerURL, url: normURL })
           consolesFound++
-          log(`Discovered console URL: ${consoleURL} => ${normURL} ` +
+          log(`Discovered console URL: ${referrerURL} => ${normURL} ` +
               `(total ${consolesFound}, saved ${consoles.length})`)
         }
         if (consolesFound === prevConsolesFound) {
-          log(`No new consoles found at ${wanderJSURL(consoleURL)}`)
+          log(`No new consoles found at ${wanderJSURL(referrerURL)}`)
           return
         }
         trimHistory(consoles)
@@ -281,26 +311,30 @@
             `(total ${consolesFound}, saved ${consoles.length})`)
       }
 
-      function collectPages (consoleURL, urls) {
+      function saveWanderPages (referrerURL, pageURLs) {
         const goodPages = []
-        for (const newURL of urls) {
-          if (!isGoodURL(newURL)) {
-            log(`Skipped incompatible page URL: ${consoleURL} => ${newURL}`)
+        for (const url of pageURLs) {
+          if (!URL.canParse(url)) {
+            log(`Skipped bad page URL: ${referrerURL} => ${url}`)
             continue
           }
-          if (isDuplicateURL(visitedPages, newURL)) {
-            log(`Skipped recently visited page URL: ${consoleURL} => ${newURL}`)
+          if (!isCompatibleURL(url)) {
+            log(`Skipped incompatible page URL: ${referrerURL} => ${url}`)
             continue
           }
-          if (isIgnoredURL(ignores, newURL)) {
-            log(`Skipped ignored page URL: ${consoleURL} => ${newURL}`)
+          if (isDuplicateURL(visitedPages, url)) {
+            log(`Skipped recently visited page URL: ${referrerURL} => ${url}`)
             continue
           }
-          goodPages.push({ referrer: consoleURL, url: newURL })
-          log(`Discovered page URL: ${consoleURL} => ${newURL} (saved ${goodPages.length})`)
+          if (isIgnoredURL(ignores, url)) {
+            log(`Skipped ignored page URL: ${referrerURL} => ${url}`)
+            continue
+          }
+          goodPages.push({ referrer: referrerURL, url })
+          log(`Discovered page URL: ${referrerURL} => ${url} (saved ${goodPages.length})`)
         }
         if (goodPages.length === 0) {
-          log(`WARNING: No good pages found at ${wanderJSURL(consoleURL)}`)
+          log(`WARNING: No good pages found at ${wanderJSURL(referrerURL)}`)
           return
         }
         if (goodPages.length > 0) {
@@ -369,26 +403,28 @@
           return
         }
         const console = pick(consoles)
-        const jsURL = wanderJSURL(console.url)
-        const urlAsCode = JSON.stringify(console.url)
-        const iframe = document.getElementById('discovery-iframe')
         log('Loading next console:', console.url)
-        log('Next console JS URL:', jsURL)
+        loadWanderJS(console.url, WANDER_MODE)
+      }
+
+      function loadWanderJS (wanderURL, mode) {
+        const iframe = document.querySelector('.loader-iframe-template').cloneNode()
+        const jsURL = wanderJSURL(wanderURL)
+        const urlAsCode = JSON.stringify(wanderURL)
+        log('Loading console JS URL:', jsURL)
         iframe.srcdoc = `
           <script src="${jsURL}"></scr` + `ipt>
           <script>
-            parent.postMessage({ wander: wander, url: ${urlAsCode} }, '*')
+            parent.postMessage({ type: ${mode}, wander: wander, url: ${urlAsCode} }, '*')
           </scr` + 'ipt>'
+        document.body.append(iframe)
+        setTimeout(function () { iframe.remove() }, 10000)
       }
 
       function receiveMessage (e) {
         log(`Received message; origin: ${e.origin}; data: ${e.data}; event:`, e)
         if (e.origin !== 'null') {
           log('WARNING: Ignored message from untrusted origin:', e.origin)
-          return
-        }
-        if (e.source !== document.getElementById('discovery-iframe').contentWindow) {
-          log('WARNING: Ignored message from untrusted source')
           return
         }
         if (typeof e.data !== 'object' || e.data === null ||
@@ -402,9 +438,149 @@
           log('WARNING: Ignored bad console data:', e.data)
           return
         }
-        log('Loaded next console:', e.data.url)
-        collectConsoles(e.data.url, e.data.wander.consoles || [])
-        collectPages(e.data.url, e.data.wander.pages || [])
+        if (e.data.type === WANDER_MODE) { // Wander mode.
+          log('Loaded next console:', e.data.url)
+          saveWanderConsoles(e.data.url, e.data.wander.consoles || [])
+          saveWanderPages(e.data.url, e.data.wander.pages || [])
+        } else { // Crawl mode.
+          if (crawlConsoleCounter >= MAX_CRAWL_CONSOLES) {
+            log(`Ignoring crawl data from ${e.data.url}; ` +
+                `max ${crawlConsoleCounter} consoles saved`)
+            return
+          }
+          crawlConsoleMap[e.data.url].visited = true
+          crawlConsoleMap[e.data.url].id = 'crawl-console-' + ++crawlConsoleCounter
+          saveCrawlConsoles(e.data.url, e.data.wander.consoles || [])
+          saveCrawlPages(e.data.url, e.data.wander.pages || [])
+          log(`Crawled console: ${e.data.url} (total ${crawlConsoleCounter})`)
+        }
+      }
+
+      function saveCrawlConsoles (referrerURL, consoleURLs) {
+        for (const url of consoleURLs) {
+          if (!URL.canParse(url)) {
+            log(`Skipped bad console URL: ${referrerURL} => ${url}`)
+            continue
+          }
+          const normURL = normaliseWanderURL(url)
+          if (!crawlConsoleMap[normURL]) {
+            // Save new referenced consoles in the map.
+            crawlConsoleQueue.push(normURL)
+            crawlConsoleMap[normURL] = {
+              depth: crawlConsoleMap[referrerURL].depth + 1,
+              referrers: [],
+              visited: false
+            }
+          }
+          // The console being crawled is a referrer for other consoles.
+          const value = crawlConsoleMap[normURL]
+          value.referrers.push(referrerURL)
+        }
+      }
+
+      function saveCrawlPages (referrerURL, pageURLs) {
+        for (const url of pageURLs) {
+          if (!URL.canParse(url)) {
+            log(`Skipped bad page URL: ${referrerURL} => ${url}`)
+            continue
+          }
+          if (!crawlPageMap[url]) {
+            crawlPageMap[url] = {
+              depth: crawlConsoleMap[referrerURL].depth,
+              id: 'crawl-page-' + crawlPageCounter++,
+              referrers: []
+            }
+          }
+          const value = crawlPageMap[url]
+          value.referrers.push(referrerURL)
+        }
+      }
+
+      function startCrawl () {
+        // Reset data.
+        Object.keys(crawlConsoleMap).forEach(function (key) {
+          delete crawlConsoleMap[key]
+        })
+        Object.keys(crawlPageMap).forEach(function (key) {
+          delete crawlPageMap[key]
+        })
+        crawlConsoleQueue.length = 0
+        crawlConsoleCounter = 0
+        crawlPageCounter = 0
+        // Reset dialog.
+        document.getElementById('crawl-console-info').textContent = 'Crawling ...'
+        document.getElementById('crawl-console-list').textContent = ''
+        document.getElementById('crawl-page-info').textContent = ''
+        document.getElementById('crawl-page-list').textContent = ''
+        // Start crawl.
+        clearTimeout(crawlTimer)
+        const baseURL = normaliseWanderURL(window.location.href)
+        crawlConsoleMap[baseURL] = {
+          depth: 0,
+          pages: wander.pages,
+          visited: false,
+        }
+        saveCrawlConsoles(baseURL, wander.consoles || [], wander.pages || [])
+        log('Starting crawl')
+        crawl()
+      }
+
+      function crawl () {
+        updateCrawlSection('console', crawlConsoleMap)
+        updateCrawlSection('page', crawlPageMap)
+        if (crawlConsoleCounter >= MAX_CRAWL_CONSOLES) {
+          log(`Cancelling crawl; max ${crawlConsoleCounter} consoles crawled`)
+          return
+        }
+        log(`Crawling ${crawlConsoleQueue.length} consoles`)
+        const interval = 100
+        const extraDelay = crawlConsoleQueue.length === 0 ? 2000 : 0
+        let delay = interval
+        while (crawlConsoleQueue.length > 0) {
+          const consoleURL = crawlConsoleQueue.shift()
+          setTimeout(function () {
+            loadWanderJS(consoleURL, CRAWL_MODE)
+          }, delay)
+          delay += interval
+        }
+        crawlTimer = setTimeout(crawl, delay + extraDelay)
+      }
+
+      function updateCrawlSection (type, crawlMap) {
+        const info = document.getElementById(`crawl-${type}-info`)
+        const list = document.getElementById(`crawl-${type}-list`)
+        let count = 0
+        for (const url in crawlMap) {
+          const value = crawlMap[url]
+          if (type === 'console' && value.visited === false) {
+            continue
+          }
+          let details = document.getElementById(value.id)
+          if (!details) {
+            details = document.createElement('details')
+            const summary = document.createElement('summary')
+            const p = document.createElement('p')
+            const ul = document.createElement('ul')
+            details.append(summary, p, ul)
+            summary.append(type === 'console' ? createConsoleLink(url) : createExtLink(url))
+            list.append(details)
+            details.id = value.id
+            p.className = 'info'
+          }
+          const p = details.querySelector('.info')
+          const label = countWord(value.referrers.length, 'console')
+          const ul = details.querySelector('ul')
+          p.textContent = `Found ${label} linking to this ${type}:`
+          ul.textContent = ''
+          for (const referrerURL of value.referrers) {
+            const li = document.createElement('li')
+            ul.append(li)
+            li.append(createConsoleLink(referrerURL))
+          }
+          count++
+        }
+        const label = countWord(count, type)
+        info.textContent = `Found ${label}:`
       }
 
       // Console Dialog
@@ -555,8 +731,8 @@
           new URL(url).protocol === 'file:'
       }
 
-      function isGoodURL (url) {
-        if (wander._checkURLs === 'no') {
+      function isCompatibleURL (url) {
+        if (wander._checkURLs === false) {
           return true
         }
         if (typeof url === 'string' && URL.canParse(url)) {
@@ -620,33 +796,35 @@
       }
 
       function normaliseWanderURL (wanderURL) {
-        if (wanderURL.endsWith('index.html')) {
-          wanderURL = wanderURL.slice(0, -'index.html'.length)
+        const url = new URL(wanderURL)
+        if (url.pathname.endsWith('index.html')) {
+          url.pathname = url.pathname.slice(0, -'index.html'.length)
         }
-        if (wanderURL.endsWith('/')) {
-          return wanderURL
+        if (url.pathname.endsWith('/')) {
+          return url.href
         }
-        const lastSlash = wanderURL.lastIndexOf('/')
-        const lastSegment = wanderURL.slice(lastSlash + 1)
-        if (lastSegment.includes('.')) { // Treat it like a filename.
-          return wanderURL
+        const lastSlash = url.pathname.lastIndexOf('/')
+        const lastSegment = url.pathname.slice(lastSlash + 1)
+        if (lastSegment.includes('.')) {
+          return url.href
         }
-        return wanderURL + '/'
+        url.pathname += '/'
+        return url.href
       }
 
       function wanderJSURL (wanderURL) {
-        // This function needs to work with relative paths, e.g.
-        // 'foo/wander.html' as well for local testing.  That's why we
-        // don't use URL API since it needs complete URLs.
-        if (wanderURL.endsWith('/')) {
-          return wanderURL + 'wander.js'
+        const url = new URL(normaliseWanderURL(wanderURL))
+        if (url.pathname.endsWith('/')) {
+          url.pathname += 'wander.js'
+          return url.href
         }
-        const lastSlash = wanderURL.lastIndexOf('/')
-        const lastSegment = wanderURL.slice(lastSlash + 1)
-        if (lastSegment.includes('.')) { // Treat it like a filename.
-          return wanderURL.slice(0, lastSlash + 1) + 'wander.js'
+        const lastSlash = url.pathname.lastIndexOf('/')
+        const lastSegment = url.pathname.slice(lastSlash + 1)
+        if (lastSegment.includes('.')) {
+          url.pathname = url.pathname.slice(0, lastSlash + 1)
         }
-        return wanderURL + '/wander.js'
+        url.pathname += 'wander.js'
+        return url.href
       }
 
       function createConsoleLink (consoleURL) {
@@ -701,6 +879,34 @@
         return encodeURIComponent(s).replace(/%2F/g, '/').replace(/%3A/g, ':')
       }
 
+      function countWord (count, word) {
+        if (count !== 1) {
+          word += 's'
+        }
+        return `${count} ${word}`
+      }
+
+      function log () {
+        if (LOGGING) { console.log.apply(console, [formatTime(), '[Wander]'].concat(Array.from(arguments))) }
+      }
+
+      function formatTime () {
+        function pad (n) {
+          return (n < 10 ? '0' : '') + n
+        }
+        const date = new Date()
+        const offset = -date.getTimezoneOffset()
+        return date.getFullYear() + '-' +
+          pad(date.getMonth() + 1) + '-' +
+          pad(date.getDate()) + ' ' +
+          pad(date.getHours()) + ':' +
+          pad(date.getMinutes()) + ':' +
+          pad(date.getSeconds()) + ' ' +
+          (offset >= 0 ? '+' : '-') +
+          pad(Math.floor(Math.abs(offset) / 60)) +
+          pad(Math.abs(offset) % 60)
+      }
+
       // Tests
       // -----
 
@@ -749,36 +955,25 @@
         assert(isIgnoredURL(['http://foo/bar/'], 'https://foo/bar'))
         assert(!isIgnoredURL(['http://foo/bar/'], 'https://foo/barx'))
 
-        assert(normaliseWanderURL('') === '/')
-        assert(normaliseWanderURL('/') === '/')
-        assert(normaliseWanderURL('/index.html') === '/')
-        assert(normaliseWanderURL('//') === '//')
-        assert(normaliseWanderURL('//index.html') === '//')
-        assert(normaliseWanderURL('/bar.html') === '/bar.html')
-        assert(normaliseWanderURL('foo') === 'foo/')
-        assert(normaliseWanderURL('foo/') === 'foo/')
-        assert(normaliseWanderURL('foo/index.html') === 'foo/')
-        assert(normaliseWanderURL('foo//') === 'foo//')
-        assert(normaliseWanderURL('foo//index.html') === 'foo//')
-        assert(normaliseWanderURL('foo/bar.html') === 'foo/bar.html')
+        assert(normaliseGotoURL('example.com') === 'https://example.com/')
+        assert(normaliseGotoURL('http://example.com') === 'http://example.com/')
+        assert(normaliseGotoURL('https://example.com') === 'https://example.com/')
+        assert(normaliseGotoURL('file:///home/foo') === 'file:///home/foo')
+
         assert(normaliseWanderURL('http://foo') === 'http://foo/')
         assert(normaliseWanderURL('http://foo/') === 'http://foo/')
-        assert(normaliseWanderURL('http://foo/index.html') === 'http://foo/')
         assert(normaliseWanderURL('http://foo//') === 'http://foo//')
+        assert(normaliseWanderURL('http://foo/index.html') === 'http://foo/')
         assert(normaliseWanderURL('http://foo//index.html') === 'http://foo//')
+        assert(normaliseWanderURL('http://foo/bar') === 'http://foo/bar/')
         assert(normaliseWanderURL('http://foo/bar.html') === 'http://foo/bar.html')
+        assert(normaliseWanderURL('http://foo.example') === 'http://foo.example/')
 
-        assert(wanderJSURL('') === '/wander.js')
-        assert(wanderJSURL('/') === '/wander.js')
-        assert(wanderJSURL('//') === '//wander.js')
-        assert(wanderJSURL('/bar.html') === '/wander.js')
-        assert(wanderJSURL('foo') === 'foo/wander.js')
-        assert(wanderJSURL('foo/') === 'foo/wander.js')
-        assert(wanderJSURL('foo//') === 'foo//wander.js')
-        assert(wanderJSURL('foo/bar.html') === 'foo/wander.js')
         assert(wanderJSURL('http://foo') === 'http://foo/wander.js')
         assert(wanderJSURL('http://foo/') === 'http://foo/wander.js')
         assert(wanderJSURL('http://foo//') === 'http://foo//wander.js')
+        assert(wanderJSURL('http://foo/w') === 'http://foo/w/wander.js')
+        assert(wanderJSURL('http://foo/w/') === 'http://foo/w/wander.js')
         assert(wanderJSURL('http://foo/bar.html') === 'http://foo/wander.js')
 
         assert(addVia('https://foo/', 'https://bar/') === 'https://foo/?via=https://bar/')
@@ -789,8 +984,12 @@
         assert(addVia('https://foo/#bar', 'https://bar/') === 'https://foo/?via=https://bar/#bar')
         assert(addVia('https://foo/#bar', 'https://bar/#me') === 'https://foo/?via=https://bar/%23me#bar')
         assert(addVia('https://foo/?bar', 'https://bar/?me') === 'https://foo/?bar&via=https://bar/%3Fme')
-        assert(addVia('https://foo/?bar=baz', 'https://bar/?who=me') === 'https://foo/?bar=baz&via=https://bar/%3Fwho%3Dme')
-        assert(addVia('https://foo/?bar=baz#qux', 'https://bar/?who=me#me') === 'https://foo/?bar=baz&via=https://bar/%3Fwho%3Dme%23me#qux')
+        assert(addVia(
+          'https://foo/?bar=baz', 'https://bar/?who=me') ===
+          'https://foo/?bar=baz&via=https://bar/%3Fwho%3Dme')
+        assert(addVia(
+          'https://foo/?bar=baz#qux', 'https://bar/?who=me#me') ===
+          'https://foo/?bar=baz&via=https://bar/%3Fwho%3Dme%23me#qux')
       }
 
       const TESTING = false
@@ -813,7 +1012,7 @@
       <input id="url-input" autocomplete="off">
     </header>
     <iframe id="wander-iframe" sandbox="allow-downloads allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts"></iframe>
-    <iframe id="discovery-iframe" sandbox="allow-scripts"></iframe>
+    <iframe class="loader-iframe-template" sandbox="allow-scripts"></iframe>
     <svg style="display: none">
       <symbol id="ext-icon" viewBox="0 0 16 16">
         <path fill="none" stroke="currentColor" stroke-width="2"
@@ -838,6 +1037,7 @@
           <button id="ignores-button">Ignores</button>
           <button id="history-button">History</button>
           <button id="discovery-button">Discovery</button>
+          <button id="crawl-button">Crawl</button>
         </nav>
       </section>
       <section id="base-section">
@@ -940,13 +1140,27 @@
           console and its wander.js file.
         </p>
       </section>
-      <footer><form><button>Close</button></form></footer>
+      <section id="crawl-section">
+        <h2>Console Crawler</h2>
+        <p>
+          This dialog is now running a crawler to find consoles
+          reachable from this console.  The list below updates
+          automatically as new consoles are found.
+        </p>
+        <p id="crawl-console-info"></p>
+        <div id="crawl-console-list"></div>
+        <p id="crawl-page-info"></p>
+        <div id="crawl-page-list"></div>
+      </section>
+      <footer><form method="dialog"><button>Close</button></form></footer>
     </dialog>
     <dialog id="about-dialog">
       <header>
-        <h1>Wander Console</h1><form method="dialog"><button>x</button></form>
-        <div>Version <span class="version">&nbsp;</span></div>
+        <span>&nbsp;</span>
+        <h1>Wander Console</h1>
+        <form method="dialog"><button>x</button></form>
       </header>
+      <div>Version <span class="version">&nbsp;</span></div>
       <p>
         Hello!  You are currently on a Wander console!  A Wander
         console lets you browse random websites and pages from the

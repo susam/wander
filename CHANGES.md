@@ -1,6 +1,19 @@
 Changelog
 =========
 
+0.5.0 (UNRELEASED)
+------------------
+
+#### Added
+
+- Add console crawler.
+
+### Changed
+
+- Stronger validations on URLs discovered in `wander.js`.  All URLs
+  must now be complete URLs that begin with protocol name.
+
+
 0.4.0 (2026-04-04)
 ------------------
 

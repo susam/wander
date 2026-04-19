@@ -7,7 +7,7 @@ const wander = {
   // My favourite websites and pages I recommend to the Wander community.
   pages: [
     'https://susam.net/',
-    'https://susam.net/invaders.html',
+    'https://susam.net/jokes.html',
   ],
 
   // Websites and consoles to ignore.  My console will never fetch

@@ -480,8 +480,8 @@ copy of the file and replacing your existing one.
 Caution
 -------
 
-When adding links to your console, make sure each one loads
-successfully within the console.  Some websites set the
+When adding links to your console, you might want to check if each
+console loads successfully within the console.  Some websites set the
 `X-Frame-Options` HTTP header or the `frame-ancestors` directive in
 their `Content-Security-Policy` header to prevent their pages from
 being embedded in other websites.  Such pages will not load inside the
