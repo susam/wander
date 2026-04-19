@@ -146,8 +146,13 @@ Install
 
 Here are the steps to set up Wander Console on your website:
 
-1. Download this bundle:
-   https://codeberg.org/susam/wander/archive/wander.zip
+1. Download the Wander bundle from one of the following locations:
+
+   - https://codeberg.org/susam/wander/archive/wander.zip
+   - https://github.com/susam/wander/archive/wander.zip
+
+   Both links provide identical copies of the bundle.  If one link
+   does not work, say due to service issues, try the other link.
 
 2. Extract the following files:
 
