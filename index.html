@@ -1,5 +1,5 @@
 <!--
-  Wander 0.5.0.dev2
+  Wander 0.5.0.dev3
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -7,6 +7,9 @@
 <html lang="en">
   <head>
     <title>Wander Console - Discover the Small Web</title>
+    <script>
+      const VERSION = '0.5.0.dev3'
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
@@ -142,7 +145,6 @@
     </style>
     <script src="wander.js"></script>
     <script>
-      const VERSION = '0.4.0'
       const LOGGING = true
       const HISTORY_SIZE = 100
       const IDLE_MODE = 0
@@ -273,6 +275,9 @@
         }
       }
 
+      // Wandering
+      // ---------
+
       function saveWanderConsoles (referrerURL, consoleURLs) {
         const prevConsolesFound = consolesFound
         for (const url of consoleURLs) {
@@ -343,9 +348,6 @@
         }
       }
 
-      // Wandering
-      // ---------
-
       function pickPage () {
         if (pages.length === 0) {
           log('WARNING: No valid pages available')
@@ -407,54 +409,8 @@
         loadWanderJS(console.url, WANDER_MODE)
       }
 
-      function loadWanderJS (wanderURL, mode) {
-        const iframe = document.querySelector('.loader-iframe-template').cloneNode()
-        const jsURL = wanderJSURL(wanderURL)
-        const urlAsCode = JSON.stringify(wanderURL)
-        log('Loading console JS URL:', jsURL)
-        iframe.srcdoc = `
-          <script src="${jsURL}"></scr` + `ipt>
-          <script>
-            parent.postMessage({ type: ${mode}, wander: wander, url: ${urlAsCode} }, '*')
-          </scr` + 'ipt>'
-        document.body.append(iframe)
-        setTimeout(function () { iframe.remove() }, 10000)
-      }
-
-      function receiveMessage (e) {
-        log(`Received message; origin: ${e.origin}; data: ${e.data}; event:`, e)
-        if (e.origin !== 'null') {
-          log('WARNING: Ignored message from untrusted origin:', e.origin)
-          return
-        }
-        if (typeof e.data !== 'object' || e.data === null ||
-            typeof e.data.url !== 'string' ||
-            typeof e.data.wander !== 'object' || e.data.wander === null) {
-          log('WARNING: Ignored dodgy message:', e.data)
-          return
-        }
-        if (!isArrayOfStrings(e.data.wander.consoles) ||
-            !isArrayOfStrings(e.data.wander.pages)) {
-          log('WARNING: Ignored bad console data:', e.data)
-          return
-        }
-        if (e.data.type === WANDER_MODE) { // Wander mode.
-          log('Loaded next console:', e.data.url)
-          saveWanderConsoles(e.data.url, e.data.wander.consoles || [])
-          saveWanderPages(e.data.url, e.data.wander.pages || [])
-        } else { // Crawl mode.
-          if (crawlConsoleCounter >= MAX_CRAWL_CONSOLES) {
-            log(`Ignoring crawl data from ${e.data.url}; ` +
-                `max ${crawlConsoleCounter} consoles saved`)
-            return
-          }
-          crawlConsoleMap[e.data.url].visited = true
-          crawlConsoleMap[e.data.url].id = 'crawl-console-' + ++crawlConsoleCounter
-          saveCrawlConsoles(e.data.url, e.data.wander.consoles || [])
-          saveCrawlPages(e.data.url, e.data.wander.pages || [])
-          log(`Crawled console: ${e.data.url} (total ${crawlConsoleCounter})`)
-        }
-      }
+      // Crawler
+      // -------
 
       function saveCrawlConsoles (referrerURL, consoleURLs) {
         for (const url of consoleURLs) {
@@ -589,6 +545,58 @@
         }
         const label = countWord(count, type)
         info.textContent = `Found ${label}:`
+      }
+
+      // Loader
+      // ------
+
+      function loadWanderJS (wanderURL, mode) {
+        const iframe = document.querySelector('.loader-iframe-template').cloneNode()
+        const jsURL = wanderJSURL(wanderURL)
+        const urlAsCode = JSON.stringify(wanderURL)
+        log('Loading console JS URL:', jsURL)
+        iframe.srcdoc = `
+          <script src="${jsURL}"></scr` + `ipt>
+          <script>
+            parent.postMessage({ type: ${mode}, wander: wander, url: ${urlAsCode} }, '*')
+          </scr` + 'ipt>'
+        document.body.append(iframe)
+        setTimeout(function () { iframe.remove() }, 10000)
+      }
+
+      function receiveMessage (e) {
+        log(`Received message; origin: ${e.origin}; data: ${e.data}; event:`, e)
+        if (e.origin !== 'null') {
+          log('WARNING: Ignored message from untrusted origin:', e.origin)
+          return
+        }
+        if (typeof e.data !== 'object' || e.data === null ||
+            typeof e.data.url !== 'string' ||
+            typeof e.data.wander !== 'object' || e.data.wander === null) {
+          log('WARNING: Ignored dodgy message:', e.data)
+          return
+        }
+        if (!isArrayOfStrings(e.data.wander.consoles) ||
+            !isArrayOfStrings(e.data.wander.pages)) {
+          log('WARNING: Ignored bad console data:', e.data)
+          return
+        }
+        if (e.data.type === WANDER_MODE) { // Wander mode.
+          log('Loaded next console:', e.data.url)
+          saveWanderConsoles(e.data.url, e.data.wander.consoles || [])
+          saveWanderPages(e.data.url, e.data.wander.pages || [])
+        } else { // Crawl mode.
+          if (crawlConsoleCounter >= MAX_CRAWL_CONSOLES) {
+            log(`Ignoring crawl data from ${e.data.url}; ` +
+                `max ${crawlConsoleCounter} consoles saved`)
+            return
+          }
+          crawlConsoleMap[e.data.url].visited = true
+          crawlConsoleMap[e.data.url].id = 'crawl-console-' + ++crawlConsoleCounter
+          saveCrawlConsoles(e.data.url, e.data.wander.consoles || [])
+          saveCrawlPages(e.data.url, e.data.wander.pages || [])
+          log(`Crawled console: ${e.data.url} (total ${crawlConsoleCounter})`)
+        }
       }
 
       // Console Dialog
