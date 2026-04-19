@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.6.0 (UNRELEASED)
+------------------
+
+#### Changed
+
+- In the console crawler dialog, give expanded link details a slightly
+  darker background.
+
+
 0.5.0 (2026-04-19)
 ------------------
 
