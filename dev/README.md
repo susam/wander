@@ -47,17 +47,14 @@ Release Checklist
     make push
     git push cb "$VER"
     git push gh "$VER"
+    make dist
     ```
 
-10. Make a new release on Codeberg.
+11. Share on Mastodon.
 
-11. Make a new release on GitHub.
+12. Share on newsletter.
 
-12. Share on Mastodon.
-
-13. Share on newsletter.
-
-14. Share on IRC.
+13. Share on IRC.
 
 [LICENCE.md]: ../LICENCE.md
 [CHANGES.md]: ../CHANGES.md
