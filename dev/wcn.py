@@ -106,9 +106,8 @@ def count_word(count: int, word: str) -> str:
 
 
 def update_console_list(data: dict[str, Any]) -> None:
-    # Read consoles.md.
     known = {}
-    with Path("dev/consoles.md").open() as f:
+    with Path("dev/wcn.md").open() as f:
         md = f.read()
         for line in md.splitlines():
             if line.startswith("* "):
@@ -128,7 +127,7 @@ def update_console_list(data: dict[str, Any]) -> None:
     for url, comment in update.items():
         out += f"* {url}{comment}\n"
     out += md[end_index:]
-    with Path("dev/consoles.md").open("w") as f:
+    with Path("dev/wcn.md").open("w") as f:
         f.write(out)
 
 

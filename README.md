@@ -14,8 +14,12 @@ browsing the small web of personal websites.
 
 Visit https://susam.net/wander/ to see an example of a Wander console.
 
+Visit https://susam.codeberg.page/wander/wcn.html ([mirror][wcn-mirror])
+to find a list of known Wander consoles.
+
 [IMG]: https://susam.github.io/blob/img/wander/wander-0.4.0.png
 [CON]: https://susam.net/wander/
+[wcn-mirror]: https://susam.github.io/wander/wcn.html
 
 
 Contents
@@ -32,6 +36,7 @@ Contents
   * [Customise 'Via' Parameter](#customise-via-parameter)
   * [Customisation Order](#customisation-order)
 * [Caution](#caution)
+* [Wander Console Network](#wander-console-network)
 * [Design](#design)
 * [Features](#features)
 * [Comparisons](#comparisons)
@@ -197,7 +202,7 @@ Here are the steps to set up Wander Console on your website:
    present it to its user.
 
 6. Once your console is live, share it with others in the following
-   community thread: [codeberg.org/susam/wander/issues/1][thread]
+   community thread: <https://codeberg.org/susam/wander/issues/1>.
 
    Hopefully, someone will link to your console and then visitors to
    their console may receive recommendations from your `wander.js`.
@@ -207,8 +212,6 @@ Here are the steps to set up Wander Console on your website:
 UI by downloading new versions of `index.html` and replacing the
 existing file.  If you want to customise the Wander Console UI, follow
 the instructions in [Customise Your Console](#customise-your-console).
-
-[thread]: https://codeberg.org/susam/wander/issues/1
 
 
 Customise Your Console
@@ -501,6 +504,36 @@ and click **Go**.  If the link loads within the console, it is safe to
 include.  If it does not, please avoid adding it to your `wander.js`.
 
 
+Wander Console Network
+----------------------
+
+Due to the distributed nature of the network, it is difficult to
+maintain a complete list of all Wander consoles.  However, we make a
+best effort to keep track of known consoles.  The current list of
+known consoles is available at:
+
+- https://susam.codeberg.page/wander/wcn.html
+- https://susam.github.io/wander/wcn.html
+
+This list is generated from time to time by a crawler that explores
+the network starting from a set of known Wander consoles listed in
+[dev/wcn.md](dev/wcn.md).  As new consoles are discovered, both the
+pages above and the Markdown file are updated accordingly.
+
+The crawled data is available the following locations:
+
+- https://susam.codeberg.page/wander/wcn.json
+- https://susam.github.io/wander/wcn.json
+
+The JSON files contain the same data as the HTML pages, but in a
+machine-readable form.
+
+Further, you can crawl the network from your console or any given
+console by clicking the **Console** button in the top navigation bar
+and then selecting **Crawl**.  Doing so will show only the portion of
+the network that is reachable from that console.
+
+
 Design
 ------
 
@@ -576,7 +609,7 @@ Join the Community
 
 If you have set up a Wander Console on your website, please share a
 link to it in the following community thread:
-[codeberg.org/susam/wander/issues/1][thread].
+<https://codeberg.org/susam/wander/issues/1>.
 
 Doing so helps other members of the community learn about the
 existence of your console and link to it from their own consoles.

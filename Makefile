@@ -56,7 +56,7 @@ crawl:
 	: > tmp.js
 	: > crawl.json
 	sed '1,/BEGIN/!d' dev/netcrawl/wander.js >> tmp.js
-	grep '^\* ' dev/consoles.md | \
+	grep '^\* ' dev/wcn.md | \
 	sed -E 's/^\* ([^ ]*).*/\1/' | \
 	while read -r url; do \
 	  echo "    '$$url'," >> tmp.js; \
