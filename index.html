@@ -472,6 +472,7 @@
         crawlConsoleQueue.length = 0
         crawlConsoleCounter = 0
         crawlPageCounter = 0
+        cdj()
         // Reset dialog.
         document.getElementById('crawl-console-info').textContent = 'Crawling ...'
         document.getElementById('crawl-console-list').textContent = ''
@@ -482,6 +483,7 @@
         const baseURL = normaliseWanderURL(window.location.href)
         crawlConsoleMap[baseURL] = {
           depth: 0,
+          id: 'crawl-console-' + ++crawlConsoleCounter,
           referrers: [],
           visited: true
         }
@@ -546,6 +548,15 @@
         }
         const label = countWord(count, type)
         info.textContent = `Found ${label}:`
+      }
+
+      function cdj () {
+        const data = {
+          date: formatTime(),
+          consoles: crawlConsoleMap,
+          pages: crawlPageMap
+        }
+        log(JSON.stringify(data, null, 2))
       }
 
       // Loader
@@ -904,7 +915,11 @@
       }
 
       function log () {
-        if (LOGGING) { console.log.apply(console, [formatTime(), '[Wander]'].concat(Array.from(arguments))) }
+        if (LOGGING) {
+          console.log.apply(
+            console, [formatTime(), '[Wander]'].concat(Array.from(arguments))
+          )
+        }
       }
 
       function formatTime () {

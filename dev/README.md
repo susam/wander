@@ -59,3 +59,31 @@ Release Checklist
 [LICENCE.md]: ../LICENCE.md
 [CHANGES.md]: ../CHANGES.md
 [index.html]: ../index.html
+
+
+Crawler Snapshot
+----------------
+
+ 1. Run the following command:
+
+    ```sh
+    make snap
+    ```
+
+ 2. In the web browser, run **Console** > **Crawl**.
+
+ 3. In the web browser console, execute the following JavaScript
+    function:
+
+    ```javascript
+    cdj()
+    ```
+
+ 4. Copy the JSON object and paste it to a file named `snap.json` in
+    the top-level directory.
+
+ 5. Then execute the following command:
+
+    ```
+    make wcn
+    ```

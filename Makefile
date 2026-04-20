@@ -7,10 +7,15 @@ checks:
 	tidy -q -e --warn-proprietary-attributes no /tmp/tmp.html
 	npx standard --plugin html --global wander index.html
 	npx standard dev/
+	venv/bin/ruff check --select ALL --ignore D211,D213,INP001,D100,D103,PLR2004
+	venv/bin/ruff format
+	venv/bin/mypy .
 
 deps:
 	npm install --no-save standard eslint-plugin-html
 	if command -v brew; then brew install tidy-html5; fi
+	python3 -m venv venv/
+	venv/bin/pip3 install ruff mypy
 
 
 # Manual Testing
@@ -33,6 +38,27 @@ message-injection-page:
 code-injection-console:
 	cp index.html dev/examples/code-injection-console/w.html
 	open dev/examples/code-injection-console/w.html || :
+
+
+# Crawler Snapshot
+# ----------------
+
+snap:
+	: > tmp.js
+	: > snap.json
+	sed '1,/BEGIN/!d' dev/snapshot/wander.js >> tmp.js
+	grep '^\* ' dev/consoles.md | \
+	sed -E 's/^\* ([^ ]*).*/\1/' | \
+	while read -r url; do \
+	  echo "    '$$url'," >> tmp.js; \
+	done
+	sed '/END/,$$!d' dev/snapshot/wander.js >> tmp.js
+	mv tmp.js dev/snapshot/wander.js
+	cp index.html dev/snapshot/w.html
+	open dev/snapshot/w.html
+
+wcn:
+	python3 dev/wcn.py
 
 
 # Susam's Personal Make Targets

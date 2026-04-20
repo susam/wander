@@ -1,0 +1,83 @@
+<!--
+  Wander Console Network Snapshot
+  Source: https://codeberg.org/susam/wander
+  Licence: MIT
+  -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Wander Console Network</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        background: #cec;
+        font-family: courier, monospace;
+        font-size: large;
+        font-weight: bold;
+        margin: 0;
+        max-width: 45em;
+        margin: 0 auto;
+        padding: 1em;
+        line-height: 1.5;
+        overflow-wrap: break-word;
+      }
+      h1, h2 {
+        margin-bottom: 0;
+      }
+      details {
+        margin-left: 1em;
+        padding-left: 0.5em;
+      }
+      details p {
+        padding-left: 1em;
+      }
+      details[open] {
+        background: #bdb;
+      }
+      ul {
+        padding-left: 2.5em;
+      }
+      svg {
+        color: inherit;
+        height: 0.8em;
+        width: 0.8em;
+        margin-left: 0.25em;
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body>
+    <svg style="display: none">
+      <symbol id="ext-icon" viewBox="0 0 16 16">
+        <path fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linejoin="round" stroke-linecap="round" d="
+                M 7 1 L 1 1 L 1 15 L 15 15 L 15 9
+                M 11 1 L 15 1 L 15 5
+                M 8 8 L 15 1
+              "/>
+      </symbol>
+    </svg>
+    <h1>Wander Console Network</h1>
+    <p>
+      Wander is a small, decentralised, self-hosted web console that
+      lets visitors to your website explore interesting websites and
+      pages recommended by a community of independent personal website
+      owners.  To learn more about Wander Console, please visit
+      <a href="https://codeberg.org/susam/wander">codeberg.org/susam/wander</a>.
+    </p>
+    <p>
+      This page presents a snapshot of known consoles and recommended
+      web pages from the Wander Console Network.  The snapshot was
+      produced by a crawler that explores the network starting from a
+      set of known Wander consoles.  As a result, it may not include
+      every console in the network, especially those that are not
+      linked from the starting points.  This snapshot was generated on
+      @date.
+    </p>
+    <h2>Wander Consoles</h2>
+    <p>Found @console-count consoles:</p>
+@console-list<h2>Wander Pages</h2>
+    <p>Found @page-count page recommendations:</p>
+@page-list</body>
+</html>
