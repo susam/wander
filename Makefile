@@ -43,19 +43,19 @@ code-injection-console:
 # Crawler Snapshot
 # ----------------
 
-snap:
+crawl:
 	: > tmp.js
-	: > snap.json
-	sed '1,/BEGIN/!d' dev/snapshot/wander.js >> tmp.js
+	: > crawl.json
+	sed '1,/BEGIN/!d' dev/netcrawl/wander.js >> tmp.js
 	grep '^\* ' dev/consoles.md | \
 	sed -E 's/^\* ([^ ]*).*/\1/' | \
 	while read -r url; do \
 	  echo "    '$$url'," >> tmp.js; \
 	done
-	sed '/END/,$$!d' dev/snapshot/wander.js >> tmp.js
-	mv tmp.js dev/snapshot/wander.js
-	cp index.html dev/snapshot/w.html
-	open dev/snapshot/w.html
+	sed '/END/,$$!d' dev/netcrawl/wander.js >> tmp.js
+	mv tmp.js dev/netcrawl/wander.js
+	cp index.html dev/netcrawl/w.html
+	open dev/netcrawl/w.html
 
 wcn:
 	python3 dev/wcn.py
@@ -77,9 +77,21 @@ dist:
 	git checkout main || :
 	git branch -df wander || :
 	git checkout -b wander
-	git rm *.md Makefile .gitignore
-	VER=$$(grep VERSION index.html | head -n 1 | cut -d "'" -f2);
+	git rm -rf *.md Makefile .gitignore dev/
+	VER=$$(grep VERSION index.html | head -n 1 | cut -d "'" -f2); \
 	git commit -m "Create distributable bundle for Wander Console $$VER"
+	git push -f cb wander
+	git push -f gh wander
+	ls -l
+	git checkout main
+
+pages: wcn
+	git checkout main || :
+	git branch -df pages || :
+	git checkout -b pages
+	git rm -rf *.md Makefile .gitignore dev/
+	git add wcn.html wcn.json
+	git commit -m 'Update WCN pages'
 	git push -f cb wander
 	git push -f gh wander
 	ls -l

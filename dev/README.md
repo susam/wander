@@ -67,7 +67,7 @@ Crawler Snapshot
  1. Run the following command:
 
     ```sh
-    make snap
+    make crawl
     ```
 
  2. In the web browser, run **Console** > **Crawl**.

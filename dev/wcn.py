@@ -6,8 +6,8 @@ from urllib.parse import urljoin
 
 
 def main() -> None:
-    # Read snap.json.
-    with Path("snap.json").open() as f:
+    # Read crawl.json.
+    with Path("crawl.json").open() as f:
         data = json.load(f)
     # Write wcn.json.
     data = clean_data(data)
