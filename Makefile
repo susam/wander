@@ -101,8 +101,8 @@ pages: wcn
 	git rm -rf index.html wander.js *.md Makefile .gitignore dev/
 	git add wcn.html wcn.json
 	git commit -m 'Update WCN pages'
-	git push -f cb wander
-	git push -f gh wander
+	git push -f cb pages
+	git push -f gh pages
 	ls -l
 	git checkout main
 	git ls-tree -rl pages
