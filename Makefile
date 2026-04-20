@@ -18,6 +18,15 @@ deps:
 	venv/bin/pip3 install ruff mypy
 
 
+# Nifty Targets
+# -------------
+
+ls:
+	git ls-tree -rl main; echo
+	git ls-tree -rl pages; echo
+	git ls-tree -rl wander; echo
+
+
 # Manual Testing
 # --------------
 
@@ -82,20 +91,21 @@ dist:
 	git commit -m "Create distributable bundle for Wander Console $$VER"
 	git push -f cb wander
 	git push -f gh wander
-	ls -l
 	git checkout main
+	git ls-tree -rl wander
 
 pages: wcn
 	git checkout main || :
 	git branch -df pages || :
 	git checkout -b pages
-	git rm -rf *.md Makefile .gitignore dev/
+	git rm -rf index.html wander.js *.md Makefile .gitignore dev/
 	git add wcn.html wcn.json
 	git commit -m 'Update WCN pages'
 	git push -f cb wander
 	git push -f gh wander
 	ls -l
 	git checkout main
+	git ls-tree -rl pages
 
 cp:
 	cp index.html ../susam.net/content/tree/wander/
