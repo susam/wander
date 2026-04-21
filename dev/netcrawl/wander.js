@@ -52,10 +52,10 @@ const wander = { // eslint-disable-line no-unused-vars
     'https://pratik.deoghare.com/wander/',
     'https://snepshark.neocities.org/wander/',
     'https://dasfsi.neocities.org/wander/',
-    'https://ink.imavinash.net/wander/wander.js',
     'https://tancre.de/wander/',
     'https://highlysuspect.agency/wander/',
     'https://iamnearlythere.com/wander/',
+    'https://ink.imavinash.net/wander/',
     // END AUTO GENERATED.
   ],
   pages: [],
