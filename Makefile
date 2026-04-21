@@ -99,7 +99,7 @@ pages: wcn
 	git checkout main || :
 	git branch -df pages || :
 	git checkout -b pages
-	git mv -f web/* .
+	git mv -f dev/web/* .
 	git add index.html wcn.html wcn.json style.css
 	git rm -rf *.md Makefile .gitignore dev/
 	git commit -m 'Update WCN pages'
