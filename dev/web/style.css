@@ -1,0 +1,72 @@
+body {
+  background: #cec;
+  font-family: courier, monospace;
+  font-weight: bold;
+  line-height: 1.5;
+  margin: 0 auto;
+  max-width: 50em;
+  overflow-wrap: break-word;
+  padding: 1em;
+}
+h1, h2 {
+  margin-bottom: 0;
+}
+a:empty:before {
+  content: "#";
+}
+a:empty {
+  visibility: hidden;
+  padding-left: 0.25em;
+}
+:hover > a:empty {
+  visibility: visible;
+}
+details p {
+  padding-left: 2.25em; /* 36 px */
+  /* Approx. summary padding-left + summary:before padding-right */
+}
+details ul {
+  padding-left: 4.25em;
+}
+details[open] {
+  background: #bdb;
+}
+summary {
+  list-style: none;
+  cursor: pointer;
+  padding-left: 2em; /* 32px */
+  text-indent: -1em; /* -16px */
+  /* Marker is indented by 1em */
+  /* Continuation lines are now indented by 2em */
+}
+summary:before {
+  content: "\25b8";
+  font-size: 1.25em; /* 20px */
+  padding-right: 0.25em; /* 4px */
+}
+details[open] summary::before {
+  content: "\25be";
+}
+svg {
+  color: inherit;
+  height: 0.8em;
+  margin-left: 0.25em;
+  vertical-align: middle;
+  width: 0.8em;
+}
+footer {
+  margin: 1em auto;
+  text-align: center;
+}
+footer a {
+  margin-right: 1.25em;
+  line-height: 2.5;
+}
+footer a:last-child {
+  margin-right: 0;
+}
+hr {
+  margin: 1em auto;
+  border: 0;
+  border-bottom: 0.1em dotted #696;
+}

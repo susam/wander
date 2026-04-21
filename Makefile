@@ -68,6 +68,7 @@ crawl:
 
 wcn:
 	python3 dev/wcn.py
+	open dev/web/wcn.html
 
 
 # Susam's Personal Make Targets
@@ -98,8 +99,10 @@ pages: wcn
 	git checkout main || :
 	git branch -df pages || :
 	git checkout -b pages
-	git rm -rf index.html wander.js *.md Makefile .gitignore dev/
-	git add wcn.html wcn.json
+	rm -rf /tmp/web/ && mv dev/web/ /tmp/web/
+	git rm -rf .
+	mv /tmp/web/* .
+	git add .x
 	git commit -m 'Update WCN pages'
 	git push -f cb pages
 	git push -f gh pages

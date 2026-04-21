@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -6,12 +7,27 @@ from urllib.parse import urljoin
 
 
 def main() -> None:
+    # Read known consoles from wcn.md.
+    known = {}
+    with Path("dev/wcn.md").open() as f:
+        md = f.read()
+    begin_mark = "<!-- BEGIN LIST -->\n\n"
+    end_mark = "\n<!-- END LIST -->\n"
+    begin_index = md.find(begin_mark) + len(begin_mark)
+    end_index = md.find(end_mark)
+    md_list = md[begin_index:end_index]
+    for line in md_list.splitlines():
+        if line.startswith("* "):
+            parts = line.split(" ", 2)
+            console = parts[1]
+            remark = (parts[2][1:-1]) if len(parts) == 3 else None
+            known[console] = remark
     # Read crawl.json.
     with Path("crawl.json").open() as f:
         data = json.load(f)
     # Write wcn.json.
-    data = clean_data(data)
-    with Path("wcn.json").open("w") as f:
+    data = clean_data(known, data)
+    with Path("dev/web/wcn.json").open("w") as f:
         json.dump(data, f, indent=2)
         f.write("\n")
     # Read wcn.html template.
@@ -19,23 +35,26 @@ def main() -> None:
         html = f.read()
     # Write wcn.html output.
     out = make_html(html, data)
-    with Path("wcn.html").open("w") as f:
+    with Path("dev/web/wcn.html").open("w") as f:
         f.write(out)
     # Write missing entries.
-    update_console_list(data)
+    out = update_known_list(known, data)
+    with Path("dev/wcn.md").open("w") as f:
+        f.write(out)
 
 
-def clean_data(data: dict[str, Any]) -> dict[str, Any]:
+def clean_data(known: dict[str, str], data: dict[str, Any]) -> dict[str, Any]:
     dt = datetime.strptime(data["date"], "%Y-%m-%d %H:%M:%S %z")
     dt = dt.astimezone(timezone.utc)
     data["date"] = dt.strftime("%Y-%m-%d %H:%M:%S %z")
-
     data["consoles"] = {
         url: value
         for url, value in data["consoles"].items()
         if not url.startswith("file:") and value["visited"]
     }
-    for value in data["consoles"].values():
+    for url, value in data["consoles"].items():
+        if url in known and known[url]:
+            data["consoles"][url]["remark"] = known[url]
         del value["depth"]
         del value["id"]
         del value["visited"]
@@ -61,9 +80,11 @@ def make_html(html: str, data: dict[str, Any]) -> str:
 
 
 def make_console_html(url: str, value: dict[str, Any]) -> str:
+    remark = value.get("remark")
+    note = (" (" + remark + ")") if remark else ""
     out = ""
     out += "      <details>\n"
-    out += "        <summary>" + make_console_link(url) + "</summary>\n"
+    out += "        <summary>" + make_console_link(url) + note + "</summary>\n"
     out += "        <p>Found " + count_word(len(value["referrers"]), "console") + " "
     out += " linking to this console:\n"
     out += "        <ul>\n"
@@ -105,30 +126,27 @@ def count_word(count: int, word: str) -> str:
     return f"{count} {word}"
 
 
-def update_console_list(data: dict[str, Any]) -> None:
-    known = {}
+def update_known_list(known: dict[str, str], data: dict[str, Any]) -> None:
+    # Remove consoles that occur in the known list but not in crawl data.
+    stage = {url: remark for url, remark in known.items() if url in data["consoles"]}
+    # Add consoles that occur in crawl data but missing from the known list.
+    for key in data["consoles"]:
+        if key not in stage:
+            stage[key] = None
+    # Update known file.
     with Path("dev/wcn.md").open() as f:
         md = f.read()
-        for line in md.splitlines():
-            if line.startswith("* "):
-                parts = line.split(" ", 2)
-                console = parts[1]
-                comment = (" " + parts[2]) if len(parts) == 3 else ""
-                known[console] = comment
-    update = {url: comment for url, comment in known.items() if url in data["consoles"]}
-    for key in data["consoles"]:
-        if key not in update:
-            update[key] = ""
     begin_mark = "<!-- BEGIN LIST -->\n\n"
     end_mark = "\n<!-- END LIST -->\n"
     begin_index = md.find(begin_mark) + len(begin_mark)
     end_index = md.find(end_mark)
     out = md[:begin_index]
-    for url, comment in update.items():
-        out += f"* {url}{comment}\n"
+    out = re.sub(r"contains \d+ known", f"contains {len(stage)} known", out)
+    for url, remark in stage.items():
+        extra = (" (" + remark + ")") if remark else ""
+        out += f"* {url}{extra}\n"
     out += md[end_index:]
-    with Path("dev/wcn.md").open("w") as f:
-        f.write(out)
+    return out
 
 
 if __name__ == "__main__":

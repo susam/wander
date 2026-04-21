@@ -2,53 +2,14 @@
   Wander Console Network Snapshot
   Source: https://codeberg.org/susam/wander
   Licence: MIT
-  -->
+-->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <title>Wander Console Network</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-      body {
-        background: #cec;
-        font-family: courier, monospace;
-        font-weight: bold;
-        line-height: 1.5;
-        margin: 0 auto;
-        max-width: 45em;
-        overflow-wrap: break-word;
-        padding: 1em;
-      }
-      h1, h2 {
-        margin-bottom: 0;
-      }
-      details {
-        margin-left: 1em;
-        padding-left: 0.5em;
-      }
-      details p {
-        padding-left: 1em;
-      }
-      details[open] {
-        background: #bdb;
-      }
-      summary {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-      ul {
-        padding-left: 2.5em;
-      }
-      svg {
-        color: inherit;
-        height: 0.8em;
-        margin-left: 0.25em;
-        vertical-align: middle;
-        width: 0.8em;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
     <svg style="display: none">
@@ -73,14 +34,30 @@
       This page presents a snapshot of known consoles and recommended
       web pages from the Wander Console Network.  The snapshot was
       produced by a crawler that explores the network starting from a
-      set of known Wander consoles.  As a result, it may not include
-      every console in the network, especially those that are not
-      linked from the starting points.  This snapshot was generated on
-      @date.
+      set of <a href="https://codeberg.org/susam/wander/src/branch/main/dev/wcn.md">known</a>
+      Wander consoles.  As a result, it may not include every console
+      in the network, especially those that are not linked from the
+      starting points.  This snapshot was generated on @date.
+      The data shown on this page is also available in a JSON file here:
+      <a href="wcn.json">wcn.json</a>.
     </p>
-    <h2>Wander Consoles</h2>
+    <h2>Contents</h2>
+    <ul>
+      <li><a href="#consoles">Wander Consoles</a></li>
+      <li><a href="#pages">Wander Pages</a></li>
+    </ul>
+    <h2 id="consoles">Wander Consoles<a href="#consoles"></a></h2>
     <p>Found @console-count consoles:</p>
-@console-list<h2>Wander Pages</h2>
+@console-list<h2 id="pages">Wander Pages<a href="#pages"></a></h2>
     <p>Found @page-count page recommendations:</p>
-@page-list</body>
+@page-list<footer>
+      <hr>
+      <div>
+        <a href="./">Home</a>
+        <a href="https://web.libera.chat/#wander">IRC</a>
+        <a href="https://mastodon.social/@susam">Mastodon</a>
+        <a href="https://codeberg.org/susam/wander">Codeberg</a>
+      </div>
+    </footer>
+  </body>
 </html>
