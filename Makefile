@@ -102,7 +102,7 @@ pages: wcn
 	rm -rf /tmp/web/ && mv dev/web/ /tmp/web/
 	git rm -rf .
 	mv /tmp/web/* .
-	git add .x
+	git add .
 	git commit -m 'Update WCN pages'
 	git push -f cb pages
 	git push -f gh pages
