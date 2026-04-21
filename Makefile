@@ -99,10 +99,9 @@ pages: wcn
 	git checkout main || :
 	git branch -df pages || :
 	git checkout -b pages
-	rm -rf /tmp/web/ && mv dev/web/ /tmp/web/
-	git rm -rf .
-	mv /tmp/web/* .
-	git add .
+	git mv -f web/* .
+	git add index.html wcn.html wcn.json style.css
+	git rm -rf *.md Makefile .gitignore dev/
 	git commit -m 'Update WCN pages'
 	git push -f cb pages
 	git push -f gh pages
