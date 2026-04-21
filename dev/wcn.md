@@ -2,7 +2,9 @@ Wander Consoles List
 ====================
 
 This file lists known Wander consoles hosted by independent website
-owners:
+owners.
+
+This list currently contains 54 known Wander consoles.
 
 <!-- BEGIN LIST -->
 
@@ -46,6 +48,20 @@ owners:
 * https://hugo0.com/wander/
 * https://bruff.gay/wander/
 * https://dawnreed.net/wander/ (another white one)
+* https://candiedreptile.club/bloglet/wander/ (the one with reptiles)
+* https://arthr.me/wander/
+* https://wander.fexilus.com/
+* https://saint-garou.neocities.org/wander/ (the olive one)
+* https://lists2.roe3.org/wander/
+* https://atomotic.com/wander/
+* https://wsmith.neocities.org/wander/
+* https://pratik.deoghare.com/wander/
+* https://snepshark.neocities.org/wander/
+* https://dasfsi.neocities.org/wander/
+* https://ink.imavinash.net/wander/wander.js
+* https://tancre.de/wander/
+* https://highlysuspect.agency/wander/
+* https://iamnearlythere.com/wander/
 
 <!-- END LIST -->
 
