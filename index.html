@@ -1,5 +1,5 @@
 <!--
-  Wander 0.6.0.dev1
+  Wander 0.6.0.dev2
   Source: https://codeberg.org/susam/wander
   Licence: MIT
 -->
@@ -104,17 +104,15 @@
       dialog header + div {
         text-align: center;
       }
-      dialog details {
-        margin-left: 1em;
-        padding-left: 0.5em;
+      dialog details summary {
+        padding-left: 2em;
+        text-indent: -1em;
       }
       dialog details p {
-        padding-left: 1em;
+        padding-left: 2em;
       }
-      dialog summary {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+      dialog details ul {
+        padding-left: 4em;
       }
       dialog footer button {
         width: 6em;
@@ -150,7 +148,7 @@
     </style>
     <script src="wander.js"></script>
     <script>
-      const VERSION = '0.6.0.dev1'
+      const VERSION = '0.6.0.dev2'
       const LOGGING = true
       const HISTORY_SIZE = 100
       const IDLE_MODE = 0

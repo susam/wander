@@ -21,31 +21,18 @@ a:empty {
 :hover > a:empty {
   visibility: visible;
 }
+details summary {
+  padding-left: 2em;
+  text-indent: -1em;
+}
 details p {
-  padding-left: 2.25em; /* 36 px */
-  /* Approx. summary padding-left + summary:before padding-right */
+  padding-left: 2em;
 }
 details ul {
-  padding-left: 4.25em;
+  padding-left: 4em;
 }
 details[open] {
   background: #bdb;
-}
-summary {
-  list-style: none;
-  cursor: pointer;
-  padding-left: 2em; /* 32px */
-  text-indent: -1em; /* -16px */
-  /* Marker is indented by 1em */
-  /* Continuation lines are now indented by 2em */
-}
-summary:before {
-  content: "\25b8";
-  font-size: 1.25em; /* 20px */
-  padding-right: 0.25em; /* 4px */
-}
-details[open] summary::before {
-  content: "\25be";
 }
 svg {
   color: inherit;
