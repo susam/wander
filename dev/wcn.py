@@ -68,8 +68,9 @@ def clean_data(known: dict[str, str], data: dict[str, Any]) -> dict[str, Any]:
 
 
 def make_html(html: str, data: dict[str, Any]) -> str:
-    parts = data["date"].split(" ")
-    date = parts[0] + " at " + parts[1] + " UTC"
+    dt = datetime.strptime(data["date"], "%Y-%m-%d %H:%M:%S %z")
+    dt = dt.astimezone(timezone.utc)
+    date = dt.strftime("%Y-%m-%d at %H:%M&nbsp;UTC")
     consoles = "".join(make_console_html(k, v) for k, v in data["consoles"].items())
     pages = "".join(make_page_html(k, v) for k, v in data["pages"].items())
     out = html.replace("@date", date)
