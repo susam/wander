@@ -55,6 +55,11 @@ const wander = { // eslint-disable-line no-unused-vars
     'https://tancre.de/wander/',
     'https://highlysuspect.agency/wander/',
     'https://iamnearlythere.com/wander/',
+    'https://patrickfournier.ca/wander/',
+    'https://negatethis.com/wander/',
+    'https://stackofgoats.studio/wander/',
+    'https://goob.sh/wander/',
+    'https://danielsenff.de/wander/',
     // END AUTO GENERATED.
   ],
   pages: [],

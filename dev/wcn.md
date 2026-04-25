@@ -4,7 +4,7 @@ Wander Consoles List
 This file lists known Wander consoles hosted by independent website
 owners.
 
-This list currently contains 53 known Wander consoles.
+This list currently contains 57 known Wander consoles.
 
 <!-- BEGIN LIST -->
 
@@ -61,6 +61,10 @@ This list currently contains 53 known Wander consoles.
 * https://tancre.de/wander/
 * https://highlysuspect.agency/wander/
 * https://iamnearlythere.com/wander/
+* https://patrickfournier.ca/wander/
+* https://stackofgoats.studio/wander/
+* https://goob.sh/wander/
+* https://danielsenff.de/wander/
 
 <!-- END LIST -->
 
