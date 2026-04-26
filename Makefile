@@ -1,21 +1,16 @@
 # Linting
 # -------
 
-checks:
+chk:
 	sed 's/ method="dialog"//' index.html > /tmp/tmp.html
 	grep -q 'TESTING = false' index.html
 	tidy -q -e --warn-proprietary-attributes no /tmp/tmp.html
 	npx standard --plugin html --global wander index.html
 	npx standard dev/
-	venv/bin/ruff check --select ALL --ignore D211,D213,INP001,D100,D103,PLR2004
-	venv/bin/ruff format
-	venv/bin/mypy .
 
-deps:
+dep:
 	npm install --no-save standard eslint-plugin-html
 	if command -v brew; then brew install tidy-html5; fi
-	python3 -m venv venv/
-	venv/bin/pip3 install ruff mypy
 
 
 # Nifty Targets
@@ -23,7 +18,6 @@ deps:
 
 ls:
 	git ls-tree -rl main; echo
-	git ls-tree -rl pages; echo
 	git ls-tree -rl wander; echo
 
 
@@ -47,28 +41,6 @@ message-injection-page:
 code-injection-console:
 	cp index.html dev/examples/code-injection-console/w.html
 	open dev/examples/code-injection-console/w.html || :
-
-
-# Crawler Snapshot
-# ----------------
-
-crawl:
-	: > tmp.js
-	: > crawl.json
-	sed '1,/BEGIN/!d' dev/netcrawl/wander.js >> tmp.js
-	grep '^\* ' dev/wcn.md | \
-	sed -E 's/^\* ([^ ]*).*/\1/' | \
-	while read -r url; do \
-	  echo "    '$$url'," >> tmp.js; \
-	done
-	sed '/END/,$$!d' dev/netcrawl/wander.js >> tmp.js
-	mv tmp.js dev/netcrawl/wander.js
-	cp index.html dev/netcrawl/w.html
-	open dev/netcrawl/w.html
-
-wcn:
-	python3 dev/wcn.py
-	open dev/web/wcn.html
 
 
 # Susam's Personal Make Targets
@@ -95,25 +67,8 @@ dist:
 	git checkout main
 	git ls-tree -rl wander
 
-pages: wcn
-	git checkout main || :
-	git branch -df pages || :
-	git checkout -b pages
-	mv -f dev/web/* .
-	git rm -rf *.md Makefile .gitignore dev/
-	git add index.html wcn.html wcn.json style.css
-	git commit -m 'Update WCN pages'
-	git push -f cb pages
-	git push -f gh pages
-	ls -l
-	git checkout main
-	git ls-tree -rl pages
-
 cp:
 	cp index.html ../susam.net/content/tree/wander/
-
-pub: cp
-	cd ~/git/susam.net && make copub
 
 PNG = ../blob/img/wander/wander.png
 
