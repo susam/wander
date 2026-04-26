@@ -14,12 +14,11 @@ browsing the small web of personal websites.
 
 Visit https://susam.net/wander/ to see an example of a Wander console.
 
-Visit https://susam.codeberg.page/wander/wcn.html ([mirror][wcn-mirror])
-to find a list of known Wander consoles.
+Visit https://susam.codeberg.page/wcn/ to find a list of known Wander
+consoles.
 
 [IMG]: https://susam.github.io/blob/img/wander/wander-0.4.0.png
 [CON]: https://susam.net/wander/
-[wcn-mirror]: https://susam.github.io/wander/wcn.html
 
 
 Contents
@@ -512,21 +511,11 @@ maintain a complete list of all Wander consoles.  However, we make a
 best effort to keep track of known consoles.  The current list of
 known consoles is available at:
 
-- https://susam.codeberg.page/wander/wcn.html
-- https://susam.github.io/wander/wcn.html
+- https://susam.codeberg.page/wcn/
+- https://susam.github.io/wcn/
 
-This list is generated from time to time by a crawler that explores
-the network starting from a set of known Wander consoles listed in
-[dev/wcn.md](dev/wcn.md).  As new consoles are discovered, both the
-pages above and the Markdown file are updated accordingly.
-
-The crawled data is available the following locations:
-
-- https://susam.codeberg.page/wander/wcn.json
-- https://susam.github.io/wander/wcn.json
-
-The JSON files contain the same data as the HTML pages, but in a
-machine-readable form.
+This list is generated from time to time by a tiny crawler project
+maintained at <https://codeberg.org/susam/wcn>.
 
 Further, you can crawl the network from your console or any given
 console by clicking the **Console** button in the top navigation bar
