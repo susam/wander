@@ -644,7 +644,7 @@
       function setupConsoleDialogNeighbours () {
         const ul = document.getElementById('neighbours-list')
         ul.textContent = ''
-        if (wander.consoles.length === 0) {
+        if (!wander.consoles || wander.consoles.length === 0) {
           createNoneItem(ul)
           return
         }
@@ -658,7 +658,7 @@
       function setupConsoleDialogPages () {
         const ul = document.getElementById('pages-list')
         ul.textContent = ''
-        if (wander.pages.length === 0) {
+        if (!wander.pages || wander.pages.length === 0) {
           createNoneItem(ul)
           return
         }
