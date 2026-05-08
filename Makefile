@@ -49,7 +49,6 @@ code-injection-console:
 # -----------------------------
 
 cc:
-cc:
 	git remote remove cc || :
 	git remote add cc git@codeberg.org:susam/$(NAME).git
 	git remote set-url cc --add git@github.com:susam/$(NAME).git
